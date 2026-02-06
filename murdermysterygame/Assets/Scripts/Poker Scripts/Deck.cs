@@ -1,35 +1,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Deck
+public class Deck : MonoBehaviour
 {
-    private List<Card> cards = new List<Card>();
+    public List<CardData> allCards;
+    private List<CardData> deck = new List<CardData>();
 
-    public Deck()
+    public void Initialize()
     {
-        foreach (Suit suit in System.Enum.GetValues(typeof(Suit)))
-        {
-            foreach (Rank rank in System.Enum.GetValues(typeof(Rank)))
-            {
-                cards.Add(new Card(suit, rank));
-            }
-        }
+        deck = new List<CardData>(allCards);
         Shuffle();
     }
 
     void Shuffle()
     {
-        for (int i = 0; i < cards.Count; i++)
+        for (int i = 0; i < deck.Count; i++)
         {
-            int rand = Random.Range(i, cards.Count);
-            (cards[i], cards[rand]) = (cards[rand], cards[i]);
+            int rand = Random.Range(i, deck.Count);
+            (deck[i], deck[rand]) = (deck[rand], deck[i]);
         }
     }
 
-    public Card Draw()
+    public CardData Draw()
     {
-        Card c = cards[0];
-        cards.RemoveAt(0);
-        return c;
+        CardData card = deck[0];
+        deck.RemoveAt(0);
+        return card;
     }
 }
+

@@ -1,56 +1,76 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 
 public class DrawPokerGameManager : MonoBehaviour
 {
-    Deck deck;
-    PlayerHand player;
-    PlayerHand dealer;
+    public static DrawPokerGameManager Instance;
+
+    public Deck deck;
+
+    public PlayerHand player;
+    public PlayerHand dealer;
+
+    public bool canDraw;
 
     void Start()
     {
-        StartRound();
+        StartNewRound();
     }
 
-    void StartRound()
+    void Awake()
     {
-        deck = new Deck();
+        Instance = this;
+    }
+
+    public void StartNewRound()
+    {
+        deck.Initialize();
+
         player = new PlayerHand();
         dealer = new PlayerHand();
 
         player.Draw(deck, 5);
         dealer.Draw(deck, 5);
 
-        Debug.Log("Player Hand:");
-        PrintHand(player.cards);
+        canDraw = true;
 
-        // Example: player discards card 1 & 3
-        PlayerDiscard(new List<int> { 1, 3 });
+        UIManager.Instance.RefreshHands();
+        UIManager.Instance.ShowResult("");
+    }
+
+    public void PlayerDraw(List<int> discard)
+    {
+        if (!canDraw) return;
+
+        player.Discard(discard);
+        player.Draw(deck, discard.Count);
 
         DealerAI();
 
+        canDraw = false;
+
         DetermineWinner();
-    }
-
-    public void PlayerDiscard(List<int> discardIndices)
-    {
-        player.Discard(discardIndices);
-        player.Draw(deck, discardIndices.Count);
-
-        Debug.Log("Player After Draw:");
-        PrintHand(player.cards);
+        UIManager.Instance.RefreshHands();
     }
 
     void DealerAI()
     {
-        // VERY basic AI: discard all non-paired cards
-        var groups = dealer.cards.GroupBy(c => c.rank);
+        Dictionary<Rank, int> counts =
+            new Dictionary<Rank, int>();
+
+        foreach (var c in dealer.cards)
+        {
+            if (!counts.ContainsKey(c.rank))
+                counts[c.rank] = 0;
+
+            counts[c.rank]++;
+        }
+
         List<int> discard = new List<int>();
 
         for (int i = 0; i < dealer.cards.Count; i++)
         {
-            if (groups.First(g => g.Key == dealer.cards[i].rank).Count() == 1)
+            if (counts[dealer.cards[i].rank] == 1)
                 discard.Add(i);
         }
 
@@ -60,16 +80,16 @@ public class DrawPokerGameManager : MonoBehaviour
 
     void DetermineWinner()
     {
-        var playerRank = PokerHandEvaluator.Evaluate(player.cards);
-        var dealerRank = PokerHandEvaluator.Evaluate(dealer.cards);
+        var p = PokerHandEvaluator.Evaluate(player.cards);
+        var d = PokerHandEvaluator.Evaluate(dealer.cards);
 
-        Debug.Log($"Player: {playerRank}");
-        Debug.Log($"Dealer: {dealerRank}");
-    }
+        string result =
+            p > d ? "Player Wins!" :
+            d > p ? "Dealer Wins!" :
+            "Tie!";
 
-    void PrintHand(List<Card> hand)
-    {
-        foreach (var c in hand)
-            Debug.Log(c);
+        UIManager.Instance.ShowResult(
+            $"Player: {p}\nDealer: {d}\n{result}");
     }
 }
+

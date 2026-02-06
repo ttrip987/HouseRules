@@ -11,3 +11,4 @@ public enum PokerHandRank
     StraightFlush,
     RoyalFlush
 }
+

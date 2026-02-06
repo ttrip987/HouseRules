@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class PlayerHand
 {
-    public List<Card> cards = new List<Card>();
+    public List<CardData> cards = new List<CardData>();
 
     public void Draw(Deck deck, int amount)
     {
@@ -12,8 +12,10 @@ public class PlayerHand
 
     public void Discard(List<int> indices)
     {
-        indices.Sort((a, b) => b.CompareTo(a)); // remove highest first
+        indices.Sort((a, b) => b.CompareTo(a));
+
         foreach (int i in indices)
             cards.RemoveAt(i);
     }
 }
+
