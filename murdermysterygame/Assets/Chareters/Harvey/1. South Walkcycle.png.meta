@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 78ae4eaa6379a4971ba22d8756086245
+guid: 3d08b40fdae8a4d7ebffd4dfb8115eb0
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,12 +97,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Idle Animation Sprite Sheet_0
+      name: 1. South Walkcycle_0
       rect:
         serializedVersion: 2
-        x: 262
-        y: 560
-        width: 105
+        x: 49
+        y: 4
+        width: 120
         height: 295
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -111,19 +111,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a0b108367dbf14154bfeb0d1f04b3641
-      internalID: -1046712402
+      spriteID: 738853cdaf388424b9c9c34062bece13
+      internalID: 1409340296
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Idle Animation Sprite Sheet_1
+      name: 1. South Walkcycle_1
       rect:
         serializedVersion: 2
-        x: 898
-        y: 560
-        width: 105
+        x: 270
+        y: 5
+        width: 120
         height: 295
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -132,50 +132,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 973b510c6a56c4e7abf0d65819b91c1e
-      internalID: -642123928
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Idle Animation Sprite Sheet_2
-      rect:
-        serializedVersion: 2
-        x: 260
-        y: 80
-        width: 105
-        height: 295
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8f0a5635d50b2439db9afef94312298f
-      internalID: 47170616
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Idle Animation Sprite Sheet_3
-      rect:
-        serializedVersion: 2
-        x: 900
-        y: 80
-        width: 105
-        height: 295
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a5566184a25ca45b3a247cb972b24453
-      internalID: 770694680
+      spriteID: ab2c3acbc8dd64bee8a04001c76d63c1
+      internalID: -406552268
       vertices: []
       indices: 
       edges: []
@@ -191,10 +149,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Idle Animation Sprite Sheet_0: -1046712402
-      Idle Animation Sprite Sheet_1: -642123928
-      Idle Animation Sprite Sheet_2: 47170616
-      Idle Animation Sprite Sheet_3: 770694680
+      1. South Walkcycle_0: 1409340296
+      1. South Walkcycle_1: -406552268
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
