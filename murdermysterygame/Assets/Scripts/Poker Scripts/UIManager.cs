@@ -9,11 +9,9 @@ public class UIManager : MonoBehaviour
 
     public Transform playerPanel;
     public Transform dealerPanel;
-
     public GameObject cardPrefab;
-    public TextMeshProUGUI resultText;
 
-    List<CardView> playerViews = new();
+    public TMP_Text resultText;
 
     void Awake()
     {
@@ -22,58 +20,54 @@ public class UIManager : MonoBehaviour
 
     public void RefreshHands()
     {
-        Clear(playerPanel);
-        Clear(dealerPanel);
+        ClearPanel(playerPanel);
+        ClearPanel(dealerPanel);
 
-        playerViews.Clear();
-
-        var game = DrawPokerGameManager.Instance;
-
-        for (int i = 0; i < game.player.cards.Count; i++)
-            CreateCard(game.player.cards[i], i, playerPanel, true);
-
-        for (int i = 0; i < game.dealer.cards.Count; i++)
-            CreateCard(game.dealer.cards[i], i, dealerPanel, false);
+        DrawHand(DrawPokerGameManager.Instance.player.cards, playerPanel, false);
+        DrawHand(DrawPokerGameManager.Instance.dealer.cards, dealerPanel, true);
     }
 
-    void CreateCard(CardData card, int index,
-                    Transform parent, bool clickable)
+    void DrawHand(List<CardData> cards, Transform panel, bool hideCards)
     {
-        var obj = Instantiate(cardPrefab, parent);
-        var view = obj.GetComponent<CardView>();
+        float spacing = 20f;
+        float startX = -spacing * (cards.Count - 1) / 2f;
 
-        view.SetCard(card, index);
-
-        if (clickable)
+        for (int i = 0; i < cards.Count; i++)
         {
-            obj.GetComponent<Button>()
-               .onClick.AddListener(view.ToggleSelect);
+            GameObject cardGO = Instantiate(cardPrefab, panel);
 
-            playerViews.Add(view);
+            RectTransform rt = cardGO.GetComponent<RectTransform>();
+            rt.anchoredPosition = new Vector2(startX + i * spacing, 0);
+
+            float angle = 0f;
+
+            if (cards.Count > 1)
+                angle = Mathf.Lerp(15f, -15f, i / (float)(cards.Count - 1));
+
+            rt.rotation = Quaternion.Euler(0, 0, angle);
+
+            CardView view = cardGO.GetComponent<CardView>();
+
+            if (hideCards && DrawPokerGameManager.Instance.canDraw)
+            {
+                view.image.sprite = null;
+            }
+            else
+            {
+                view.SetCard(cards[i], i);
+            }
         }
     }
 
-    public void OnDrawPressed()
-    {
-        Debug.Log("drawed new cards");
-        List<int> discard = new();
-
-        foreach (var v in playerViews)
-            if (v.selected)
-                discard.Add(v.index);
-
-        DrawPokerGameManager.Instance.PlayerDraw(discard);
-    }
-
-    public void ShowResult(string text)
-    {
-        resultText.text = text;
-    }
-
-    void Clear(Transform panel)
+    void ClearPanel(Transform panel)
     {
         foreach (Transform child in panel)
             Destroy(child.gameObject);
     }
-}
 
+    public void ShowResult(string text)
+    {
+        if (resultText != null)
+            resultText.text = text;
+    }
+}

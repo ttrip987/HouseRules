@@ -24,7 +24,7 @@ public class DrawPokerGameManager : MonoBehaviour
 
     public void StartNewRound()
     {
-        deck.Initialize();
+        deck.ResetDeck();
 
         player = new PlayerHand();
         dealer = new PlayerHand();
@@ -80,8 +80,8 @@ public class DrawPokerGameManager : MonoBehaviour
 
     void DetermineWinner()
     {
-        var p = PokerHandEvaluator.Evaluate(player.cards);
-        var d = PokerHandEvaluator.Evaluate(dealer.cards);
+        var p = HandEvaluator.EvaluateHand(player.cards);
+        var d = HandEvaluator.EvaluateHand(dealer.cards);
 
         string result =
             p > d ? "Player Wins!" :
@@ -90,6 +90,22 @@ public class DrawPokerGameManager : MonoBehaviour
 
         UIManager.Instance.ShowResult(
             $"Player: {p}\nDealer: {d}\n{result}");
+    }
+
+    public void OnDrawButton()
+    {
+    
+        List<int> discard = new List<int>();
+
+        for (int i = 0; i < player.cards.Count; i++)
+        {
+        
+            var cardView = UIManager.Instance.playerPanel.GetChild(i).GetComponent<CardView>();
+            if (cardView.selected)
+                discard.Add(i);
+        }
+
+        PlayerDraw(discard);
     }
 }
 

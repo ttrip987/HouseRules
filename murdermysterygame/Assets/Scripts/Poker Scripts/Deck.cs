@@ -3,28 +3,42 @@ using UnityEngine;
 
 public class Deck : MonoBehaviour
 {
-    public List<CardData> allCards;
-    private List<CardData> deck = new List<CardData>();
+    public List<CardData> allCards; // Assign 52 cards in Inspector
 
-    public void Initialize()
+    private List<CardData> currentDeck;
+
+    void Awake()
     {
-        deck = new List<CardData>(allCards);
+        ResetDeck();
+    }
+
+    public void ResetDeck()
+    {
+        currentDeck = new List<CardData>(allCards);
         Shuffle();
     }
 
     void Shuffle()
     {
-        for (int i = 0; i < deck.Count; i++)
+        for (int i = 0; i < currentDeck.Count; i++)
         {
-            int rand = Random.Range(i, deck.Count);
-            (deck[i], deck[rand]) = (deck[rand], deck[i]);
+            CardData temp = currentDeck[i];
+            int randomIndex = Random.Range(i, currentDeck.Count);
+            currentDeck[i] = currentDeck[randomIndex];
+            currentDeck[randomIndex] = temp;
         }
     }
 
-    public CardData Draw()
+    public CardData DrawCard()
     {
-        CardData card = deck[0];
-        deck.RemoveAt(0);
+        if (currentDeck.Count == 0)
+        {
+            Debug.LogError("Deck empty!");
+            return null;
+        }
+
+        CardData card = currentDeck[0];
+        currentDeck.RemoveAt(0);
         return card;
     }
 }

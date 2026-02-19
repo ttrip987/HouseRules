@@ -7,7 +7,7 @@ public class PlayerHand
     public void Draw(Deck deck, int amount)
     {
         for (int i = 0; i < amount; i++)
-            cards.Add(deck.Draw());
+            cards.Add(deck.DrawCard());
     }
 
     public void Discard(List<int> indices)
