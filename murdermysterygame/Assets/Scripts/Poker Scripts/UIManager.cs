@@ -55,6 +55,7 @@ public class UIManager : MonoBehaviour
 
     public void OnDrawPressed()
     {
+        Debug.Log("drawed new cards");
         List<int> discard = new();
 
         foreach (var v in playerViews)
