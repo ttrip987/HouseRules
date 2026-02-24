@@ -41,3 +41,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Hand
+    uniqueID: 4226799029
+    locked: 0
