@@ -31,6 +31,13 @@ public class CardView : MonoBehaviour
         selected = false;
     }
 
+    public void PopUp(bool show)
+    {
+        RectTransform rt = GetComponent<RectTransform>();
+        float yOffset = show ? 30f : 0f; 
+        rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, yOffset);
+    }
+
     public void ToggleSelect()
     {
         selected = !selected;

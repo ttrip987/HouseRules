@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 input;
     private Animator animator;
-
     private SpriteRenderer spriteRenderer;
 
     void Awake()
@@ -16,6 +15,11 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        
+        rb.gravityScale = 0;               
+        rb.freezeRotation = true;         
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous; 
     }
 
     void Update()
@@ -28,16 +32,17 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+       
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
 
-        // Prevent diagonal movement
+        
         if (input.x != 0)
-            input.y = 0; 
+            input.y = 0;
 
+        
         if (input.x > 0)
             spriteRenderer.flipX = false;
-
         else if (input.x < 0)
             spriteRenderer.flipX = true;
 
@@ -46,7 +51,8 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.velocity = canMove ? input.normalized * moveSpeed : Vector2.zero;
+        
+        rb.velocity = input.normalized * moveSpeed;
     }
 
     void UpdateAnimationBools()
@@ -54,26 +60,24 @@ public class PlayerController : MonoBehaviour
         ResetDirectionBools();
 
         if (input == Vector2.zero)
-        {   
+        {
             animator.SetBool("IsMoving", false);
             return;
         }
-        else{
-        animator.SetBool("IsMoving", true);
+        else
+        {
+            animator.SetBool("IsMoving", true);
         }
 
-    
-        if (input.y > 0.3)
+        if (input.y > 0.3f)
             animator.SetBool("MovingUp", true);
-        else if (input.y < - 0.3)
+        else if (input.y < -0.3f)
             animator.SetBool("MovingDown", true);
-        else if (input.x > 0.3)
+        else if (input.x > 0.3f)
             animator.SetBool("MovingRight", true);
-        else if (input.x < -0.3)
+        else if (input.x < -0.3f)
             animator.SetBool("MovingLeft", true);
     }
-
-  
 
     void ResetDirectionBools()
     {

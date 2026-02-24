@@ -10,64 +10,99 @@ public class UIManager : MonoBehaviour
     public Transform playerPanel;
     public Transform dealerPanel;
     public GameObject cardPrefab;
-
     public TMP_Text resultText;
 
-    void Awake()
-    {
-        Instance = this;
-    }
+    public float cardSpacing = 40f; 
+
+    void Awake() { Instance = this; }
 
     public void RefreshHands()
     {
         ClearPanel(playerPanel);
         ClearPanel(dealerPanel);
 
-        DrawHand(DrawPokerGameManager.Instance.player.cards, playerPanel, false);
-        DrawHand(DrawPokerGameManager.Instance.dealer.cards, dealerPanel, true);
+        SpawnHand(DrawPokerGameManager.Instance.player.cards, playerPanel);
+        SpawnHand(DrawPokerGameManager.Instance.dealer.cards, dealerPanel);
     }
 
-    void DrawHand(List<CardData> cards, Transform panel, bool hideCards)
+    void SpawnHand(List<CardData> handCards, Transform panel)
     {
-        float spacing = 20f;
-        float startX = -spacing * (cards.Count - 1) / 2f;
+        int count = handCards.Count;
+        float startX = -cardSpacing * (count - 1) / 2f;
 
-        for (int i = 0; i < cards.Count; i++)
+        for (int i = 0; i < count; i++)
         {
+            CardData cardData = handCards[i];
             GameObject cardGO = Instantiate(cardPrefab, panel);
+            CardView cardView = cardGO.GetComponent<CardView>();
+            if (cardView != null) cardView.SetCard(cardData, i);
 
             RectTransform rt = cardGO.GetComponent<RectTransform>();
-            rt.anchoredPosition = new Vector2(startX + i * spacing, 0);
-
-            float angle = 0f;
-
-            if (cards.Count > 1)
-                angle = Mathf.Lerp(15f, -15f, i / (float)(cards.Count - 1));
-
-            rt.rotation = Quaternion.Euler(0, 0, angle);
-
-            CardView view = cardGO.GetComponent<CardView>();
-
-            if (hideCards && DrawPokerGameManager.Instance.canDraw)
-            {
-                view.image.sprite = null;
-            }
-            else
-            {
-                view.SetCard(cards[i], i);
-            }
+            rt.anchoredPosition = new Vector2(startX + i * cardSpacing, 0);
         }
     }
 
     void ClearPanel(Transform panel)
     {
-        foreach (Transform child in panel)
-            Destroy(child.gameObject);
+        for (int i = panel.childCount - 1; i >= 0; i--)
+        {
+            GameObject childGO = panel.GetChild(i).gameObject;
+            Destroy(childGO);
+        }
     }
 
     public void ShowResult(string text)
     {
         if (resultText != null)
             resultText.text = text;
+    }
+
+    public void PopUpWinningCards(List<CardData> winningCards, Transform panel)
+    {
+        for (int i = 0; i < panel.childCount; i++)
+        {
+            CardView cardView = panel.GetChild(i).GetComponent<CardView>();
+            if (cardView != null)
+                cardView.PopUp(winningCards.Contains(cardView.data));
+        }
+    }
+
+    public void ResetCardPopups()
+    {
+        for (int i = 0; i < playerPanel.childCount; i++)
+        {
+            CardView cardView = playerPanel.GetChild(i).GetComponent<CardView>();
+            if (cardView != null) cardView.PopUp(false);
+        }
+
+        for (int i = 0; i < dealerPanel.childCount; i++)
+        {
+            CardView cardView = dealerPanel.GetChild(i).GetComponent<CardView>();
+            if (cardView != null) cardView.PopUp(false);
+        }
+    }
+
+    public void PlayerDiscard()
+    {
+        List<int> discardIndices = new List<int>();
+
+        for (int i = 0; i < UIManager.Instance.playerPanel.childCount; i++)
+        {
+            CardView card = UIManager.Instance.playerPanel.GetChild(i).GetComponent<CardView>();
+            if (card != null && card.selected)
+                discardIndices.Add(i);
+        }
+
+        if (discardIndices.Count > 0)
+        {
+            DrawPokerGameManager.Instance.player.Discard(discardIndices);
+            DrawPokerGameManager.Instance.player.Draw(DrawPokerGameManager.Instance.deck, discardIndices.Count);
+
+            DrawPokerGameManager.Instance.DealerAI(); 
+            DrawPokerGameManager.Instance.DetermineWinner();
+
+            UIManager.Instance.RefreshHands();
+            UIManager.Instance.ResetCardPopups();
+        }
     }
 }

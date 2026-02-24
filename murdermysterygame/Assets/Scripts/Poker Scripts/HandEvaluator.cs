@@ -3,62 +3,96 @@ using System.Linq;
 
 public static class HandEvaluator
 {
-
-    public static long EvaluateHand(List<CardData> hand)
+    public enum HandRank
     {
+        HighCard = 1,
+        Pair,
+        TwoPair,
+        ThreeOfAKind,
+        Straight,
+        Flush,
+        FullHouse,
+        FourOfAKind,
+        StraightFlush,
+        RoyalFlush
+    }
 
-        var ranks = hand.Select(c => (int)c.rank).OrderByDescending(r => r).ToList();
-        var suits = hand.Select(c => c.suit).ToList();
+    public static (long score, List<CardData> winningCards, string handName) EvaluateHandWithCards(List<CardData> cards)
+    {
+        cards = cards.OrderByDescending(c => c.rank).ToList();
+        List<CardData> winningCards = new List<CardData>();
+        string handName = "High Card";
+        long score = (int)cards[0].rank;
 
-        bool isFlush = suits.Distinct().Count() == 1;
-
+        bool isFlush = cards.All(c => c.suit == cards[0].suit);
         bool isStraight = true;
-        for (int i = 0; i < ranks.Count - 1; i++)
+        for (int i = 0; i < cards.Count - 1; i++)
         {
-            if (ranks[i] - 1 != ranks[i + 1])
+            if ((int)cards[i].rank - 1 != (int)cards[i + 1].rank)
             {
                 isStraight = false;
                 break;
             }
         }
 
+        var groups = cards.GroupBy(c => c.rank).OrderByDescending(g => g.Count()).ToList();
+        int maxCount = groups[0].Count();
 
-        var groups = hand.GroupBy(c => c.rank)
-                         .OrderByDescending(g => g.Count()) 
-                         .ThenByDescending(g => (int)g.Key) 
-                         .ToList();
-
-        int mainCount = groups[0].Count();
-        int mainRank = (int)groups[0].Key;
-
-        int secondCount = groups.Count > 1 ? groups[1].Count() : 0;
-        int secondRank = groups.Count > 1 ? (int)groups[1].Key : 0;
-
-
-        long score = 0;
-
-
-        if (isStraight && isFlush && ranks[0] == 14) score = 10_000_000;     
-        else if (isStraight && isFlush) score = 9_000_000;                  
-        else if (mainCount == 4) score = 8_000_000 + mainRank * 100 + ranks.Where(r => r != mainRank).First(); 
-        else if (mainCount == 3 && secondCount == 2) score = 7_000_000 + mainRank * 100 + secondRank;            
-        else if (isStraight) score = 5_000_000 + ranks[0];                    
-        else if (mainCount == 3) score = 4_000_000 + mainRank * 10000 + RanksToNumber(ranks.Where(r => r != mainRank).ToList()); 
-        else if (mainCount == 2 && secondCount == 2) score = 3_000_000 + mainRank * 10000 + secondRank * 100 + ranks.Where(r => r != mainRank && r != secondRank).First(); 
-        else if (mainCount == 2) score = 2_000_000 + mainRank * 10000 + RanksToNumber(ranks.Where(r => r != mainRank).ToList()); 
-        else score = 1_000_000 + RanksToNumber(ranks);                      
-
-        return score;
-    }
-
-
-    private static long RanksToNumber(List<int> ranks)
-    {
-        long result = 0;
-        foreach (var r in ranks)
+        if (isStraight && isFlush)
         {
-            result = result * 100 + r; 
+            handName = cards[0].rank == Rank.Ace ? "Royal Flush" : "Straight Flush";
+            winningCards = new List<CardData>(cards);
+            score = 900 + (int)cards[0].rank;
         }
-        return result;
+        else if (maxCount == 4)
+        {
+            handName = "Four of a Kind";
+            winningCards = new List<CardData>(groups[0]);
+            score = 800 + (int)groups[0].Key;
+        }
+        else if (maxCount == 3 && groups.Count > 1 && groups[1].Count() == 2)
+        {
+            handName = "Full House";
+            winningCards = new List<CardData>(groups[0].Concat(groups[1]));
+            score = 700 + (int)groups[0].Key;
+        }
+        else if (isFlush)
+        {
+            handName = "Flush";
+            winningCards = new List<CardData>(cards);
+            score = 600 + (int)cards[0].rank;
+        }
+        else if (isStraight)
+        {
+            handName = "Straight";
+            winningCards = new List<CardData>(cards);
+            score = 500 + (int)cards[0].rank;
+        }
+        else if (maxCount == 3)
+        {
+            handName = "Three of a Kind";
+            winningCards = new List<CardData>(groups[0]);
+            score = 400 + (int)groups[0].Key;
+        }
+        else if (maxCount == 2 && groups.Count(g => g.Count() == 2) == 2)
+        {
+            handName = "Two Pair";
+            winningCards = new List<CardData>(groups[0].Concat(groups[1]));
+            score = 300 + (int)groups[0].Key;
+        }
+        else if (maxCount == 2)
+        {
+            handName = "Pair";
+            winningCards = new List<CardData>(groups[0]);
+            score = 200 + (int)groups[0].Key;
+        }
+        else
+        {
+            handName = "High Card";
+            winningCards = new List<CardData> { cards[0] };
+            score = 100 + (int)cards[0].rank;
+        }
+
+        return (score, winningCards, handName);
     }
 }
