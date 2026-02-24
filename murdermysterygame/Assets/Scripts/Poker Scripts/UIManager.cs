@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 
@@ -12,7 +11,13 @@ public class UIManager : MonoBehaviour
     public GameObject cardPrefab;
     public TMP_Text resultText;
 
-    public float cardSpacing = 40f; 
+    public float playerSpacing = 95f;
+    public float playerCurve = 18f;
+    public float playerRot = 10f;
+
+    public float dealerSpacing = 70f;
+    public float dealerCurve = 10f;
+    public float dealerRot = 6f;
 
     void Awake() { Instance = this; }
 
@@ -23,86 +28,90 @@ public class UIManager : MonoBehaviour
 
         SpawnHand(DrawPokerGameManager.Instance.player.cards, playerPanel);
         SpawnHand(DrawPokerGameManager.Instance.dealer.cards, dealerPanel);
+
+        ArrangeFan(playerPanel, playerSpacing, playerCurve, playerRot, false);
+        ArrangeFan(dealerPanel, dealerSpacing, dealerCurve, dealerRot, true);
     }
 
     void SpawnHand(List<CardData> handCards, Transform panel)
     {
-        int count = handCards.Count;
-        float startX = -cardSpacing * (count - 1) / 2f;
+        for (int i = 0; i < handCards.Count; i++)
+        {
+            GameObject cardGO = Instantiate(cardPrefab, panel);
+            cardGO.transform.localScale = Vector3.one;
+
+            RectTransform rt = cardGO.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.5f, 0.5f);
+            rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.localRotation = Quaternion.identity;
+
+            CardView view = cardGO.GetComponent<CardView>();
+            if (view != null) view.SetCard(handCards[i], i);
+        }
+    }
+
+    void ArrangeFan(Transform panel, float spacing, float curve, float rotAmt, bool invert)
+    {
+        int count = panel.childCount;
+        if (count == 0) return;
+
+        float mid = (count - 1) / 2f;
 
         for (int i = 0; i < count; i++)
         {
-            CardData cardData = handCards[i];
-            GameObject cardGO = Instantiate(cardPrefab, panel);
-            CardView cardView = cardGO.GetComponent<CardView>();
-            if (cardView != null) cardView.SetCard(cardData, i);
+            float t = i - mid;
 
-            RectTransform rt = cardGO.GetComponent<RectTransform>();
-            rt.anchoredPosition = new Vector2(startX + i * cardSpacing, 0);
+            float x = t * spacing;
+            float y = (-Mathf.Abs(t) * curve) * (invert ? -1f : 1f);
+
+            float rotZ = (-t * rotAmt) * (invert ? -1f : 1f);
+
+            RectTransform rt = panel.GetChild(i).GetComponent<RectTransform>();
+            CardView view = panel.GetChild(i).GetComponent<CardView>();
+
+            if (view != null) view.SetLayout(new Vector2(x, y), rotZ);
+            else if (rt != null)
+            {
+                rt.anchoredPosition = new Vector2(x, y);
+                rt.localRotation = Quaternion.Euler(0f, 0f, rotZ);
+            }
         }
     }
 
     void ClearPanel(Transform panel)
     {
         for (int i = panel.childCount - 1; i >= 0; i--)
-        {
-            GameObject childGO = panel.GetChild(i).gameObject;
-            Destroy(childGO);
-        }
+            Destroy(panel.GetChild(i).gameObject);
     }
 
     public void ShowResult(string text)
     {
-        if (resultText != null)
-            resultText.text = text;
+        if (resultText != null) resultText.text = text;
     }
 
     public void PopUpWinningCards(List<CardData> winningCards, Transform panel)
     {
         for (int i = 0; i < panel.childCount; i++)
         {
-            CardView cardView = panel.GetChild(i).GetComponent<CardView>();
-            if (cardView != null)
-                cardView.PopUp(winningCards.Contains(cardView.data));
+            CardView view = panel.GetChild(i).GetComponent<CardView>();
+            if (view != null)
+                view.SetPop(winningCards != null && winningCards.Contains(view.data));
         }
     }
 
     public void ResetCardPopups()
     {
-        for (int i = 0; i < playerPanel.childCount; i++)
-        {
-            CardView cardView = playerPanel.GetChild(i).GetComponent<CardView>();
-            if (cardView != null) cardView.PopUp(false);
-        }
-
-        for (int i = 0; i < dealerPanel.childCount; i++)
-        {
-            CardView cardView = dealerPanel.GetChild(i).GetComponent<CardView>();
-            if (cardView != null) cardView.PopUp(false);
-        }
+        ResetPanel(playerPanel);
+        ResetPanel(dealerPanel);
     }
 
-    public void PlayerDiscard()
+    void ResetPanel(Transform panel)
     {
-        List<int> discardIndices = new List<int>();
-
-        for (int i = 0; i < UIManager.Instance.playerPanel.childCount; i++)
+        for (int i = 0; i < panel.childCount; i++)
         {
-            CardView card = UIManager.Instance.playerPanel.GetChild(i).GetComponent<CardView>();
-            if (card != null && card.selected)
-                discardIndices.Add(i);
-        }
-
-        if (discardIndices.Count > 0)
-        {
-            DrawPokerGameManager.Instance.player.Discard(discardIndices);
-            DrawPokerGameManager.Instance.player.Draw(DrawPokerGameManager.Instance.deck, discardIndices.Count);
-
-            DrawPokerGameManager.Instance.DealerAI(); 
-            DrawPokerGameManager.Instance.DetermineWinner();
-
-            UIManager.Instance.RefreshHands();
-            UIManager.Instance.ResetCardPopups();
+            CardView view = panel.GetChild(i).GetComponent<CardView>();
+            if (view != null) view.SetPop(false);
         }
     }
 }

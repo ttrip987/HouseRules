@@ -1,63 +1,64 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class CardView : MonoBehaviour
 {
-    public Image image;
-
     public CardData data;
     public int index;
     public bool selected;
 
-    private RectTransform rectTransform;
-    private Vector2 basePosition;
+    public float popAmount = 35f;
+    public float popSpeed = 12f;
 
-    public float liftAmount = 40f;
-    public float moveSpeed = 10f;
+    RectTransform rt;
+    Image img;
+
+    Vector2 basePos;
+    float baseRotZ;
+
+    float currentPop;
+    float targetPop;
 
     void Awake()
     {
-        rectTransform = GetComponent<RectTransform>();
+        rt = GetComponent<RectTransform>();
+        img = GetComponent<Image>();
+    }
+
+    void Update()
+    {
+        currentPop = Mathf.Lerp(currentPop, targetPop, Time.deltaTime * popSpeed);
+        rt.anchoredPosition = basePos + new Vector2(0f, currentPop);
+        rt.localRotation = Quaternion.Euler(0f, 0f, baseRotZ);
     }
 
     public void SetCard(CardData card, int i)
     {
         data = card;
         index = i;
-        image.sprite = card.sprite;
 
-        basePosition = rectTransform.anchoredPosition;
+        if (img != null) img.sprite = card.sprite;
+
         selected = false;
+        targetPop = 0f;
+        currentPop = 0f;
     }
 
-    public void PopUp(bool show)
+    public void SetLayout(Vector2 pos, float rotZ)
     {
-        RectTransform rt = GetComponent<RectTransform>();
-        float yOffset = show ? 30f : 0f; 
-        rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, yOffset);
+        basePos = pos;
+        baseRotZ = rotZ;
     }
 
     public void ToggleSelect()
     {
         selected = !selected;
-        StopAllCoroutines();
-        StartCoroutine(MoveCard(selected));
+        targetPop = selected ? popAmount : 0f;
     }
 
-    IEnumerator MoveCard(bool up)
+    public void SetPop(bool up)
     {
-        Vector2 target = up
-            ? basePosition + Vector2.up * liftAmount
-            : basePosition;
-
-        while (Vector2.Distance(rectTransform.anchoredPosition, target) > 0.1f)
-        {
-            rectTransform.anchoredPosition =
-                Vector2.Lerp(rectTransform.anchoredPosition, target, Time.deltaTime * moveSpeed);
-            yield return null;
-        }
-
-        rectTransform.anchoredPosition = target;
+        selected = up;
+        targetPop = up ? popAmount : 0f;
     }
 }

@@ -124,4 +124,13 @@ public class ChipManager : MonoBehaviour
             }
         }
     }
+
+    public void SplitPot()
+    {
+        int half = pot / 2;
+        playerChips += half;
+        dealerChips += pot - half;
+        pot = 0;
+        UpdateUI();
+    }
 }
