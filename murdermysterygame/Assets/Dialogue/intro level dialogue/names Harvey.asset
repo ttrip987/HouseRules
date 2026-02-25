@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: names Harvey
   m_EditorClassIdentifier: 
   line: 'Names Harvey. im with the Marino family but the rest couldnt make it. '
-  speakerName: 'Harvey. '
+  speakerName: Harvey
   choices: []
   nextNode: {fileID: 11400000, guid: 33e689113c9b5324685d73ee53daa659, type: 2}

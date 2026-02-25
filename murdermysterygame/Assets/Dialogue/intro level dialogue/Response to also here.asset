@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   line: 'Well for your information, I was showing my nephew Wesley over there how
     to deal as hes one the dealers this year. '
-  speakerName: 'Bruce. '
+  speakerName: Bruce
   choices: []
   nextNode: {fileID: 11400000, guid: 9d6561aade6ae3742a0f0704b0d4121b, type: 2}

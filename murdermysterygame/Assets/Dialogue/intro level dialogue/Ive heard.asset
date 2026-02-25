@@ -15,6 +15,6 @@ MonoBehaviour:
   line: 'Ive heard about that incident, its a sad thing that has happened to them,
     great people they are. Anyway have fun while your here and hopefully we play
     each other in the next few days. '
-  speakerName: 'Bruce. '
+  speakerName: Bruce
   choices: []
   nextNode: {fileID: 11400000, guid: 92b84268e8eb5c84085d83e86d8e5462, type: 2}

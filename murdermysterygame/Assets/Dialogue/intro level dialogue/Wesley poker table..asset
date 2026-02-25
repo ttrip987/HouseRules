@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wesley poker table.
   m_EditorClassIdentifier: 
   line: Soooooo, did you want to play or like?
-  speakerName: 'Wesley. '
+  speakerName: Wesley
   choices:
   - choiceText: 'Yeah '
     nextNode: {fileID: 11400000, guid: 7e6cc99e021727d4d91bfada08af5b8c, type: 2}
