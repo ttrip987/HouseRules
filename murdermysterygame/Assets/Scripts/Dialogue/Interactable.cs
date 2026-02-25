@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
-    public DialogueNode startingNode;
+    public DialogueNodeAsset startingNode;
 
     private bool playerInRange;
     private Dialogue dialogue;
@@ -14,15 +14,17 @@ public class Interactable : MonoBehaviour
 
     void Update()
     {
+        if (dialogue != null && dialogue.IsOpen)
+            return; 
+
         if (playerInRange && Input.GetKeyDown(KeyCode.Space))
         {
             if (startingNode != null)
                 dialogue.StartDialogue(startingNode);
 
-            OnInteract(); 
+            OnInteract();
         }
     }
-
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))

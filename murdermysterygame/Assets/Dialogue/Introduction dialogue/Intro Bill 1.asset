@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
+  m_Name: Intro Bill 1
+  m_EditorClassIdentifier: 
+  line: It's big, Harvey. The biggest gathering we've seen yet. All three families
+    under the same roof. It's too big to ignore. Some kinda poker tournament they're
+    running, we don't know what for. We bummed the invite off one of the Marino goons
+    we caught in the raid, that's you. Keep your head down and no one will know you
+    don't belong.
+  speakerName: Bill
+  choices: []
+  nextNode: {fileID: 11400000, guid: 86e8a7f930bfd2c468c5f87e63988772, type: 2}

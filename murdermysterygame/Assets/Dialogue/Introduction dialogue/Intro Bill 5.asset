@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
+  m_Name: Intro Bill 5
+  m_EditorClassIdentifier: 
+  line: 'Tonight. We''ve got a boat for you. It''ll be waiting for you so you can
+    leave anytime. In and out, you''re good at those. Just make sure you don''t run
+    out of funding, you need to stick around for at least a few days. Maybe brush
+    up on your 5 Card.
+
+'
+  speakerName: Bill
+  choices: []
+  nextNode: {fileID: 11400000, guid: c0c2078cf9f567f4ca274e7774dfd0f8, type: 2}

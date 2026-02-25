@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class ChipManager : MonoBehaviour
 {
@@ -27,6 +28,8 @@ public class ChipManager : MonoBehaviour
     public Sprite chip25Sprite;
     public Sprite chip100Sprite;
     public Sprite chip500Sprite;
+
+    
 
     void Awake()
     {
@@ -71,11 +74,26 @@ public class ChipManager : MonoBehaviour
 
     public bool IsGameOver()
     {
-        if (playerChips <= 0 || dealerChips <= 0)
+        if (playerChips <= 0)
         {
-            gameOverText.text = playerChips <= 0 ? "DEALER WINS THE MATCH!" : "PLAYER WINS THE MATCH!";
+            if (SceneTransitionManager.Instance != null)
+                SceneTransitionManager.Instance.LoadScene("Day 1 Poker Game (wesley)");
+            else
+                SceneManager.LoadScene("Day 1 Poker Game (wesley)");
+
             return true;
         }
+
+        if (dealerChips <= 0)
+        {
+            if (SceneTransitionManager.Instance != null)
+                SceneTransitionManager.Instance.LoadScene("Day 1 end scene");
+            else
+                SceneManager.LoadScene("Day 1 end scene");
+
+            return true;
+        }
+
         return false;
     }
 
