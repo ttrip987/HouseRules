@@ -7,17 +7,21 @@ public class CardView : MonoBehaviour
     public int index;
     public bool selected;
 
+    private RectTransform rt;
+    private Image img;
+
+    [Header("Pop Settings")]
     public float popAmount = 35f;
     public float popSpeed = 12f;
 
-    RectTransform rt;
-    Image img;
+    private Vector2 basePos;
+    private float baseRotZ;
 
-    Vector2 basePos;
-    float baseRotZ;
+    private float currentPop;
+    private float targetPop;
 
-    float currentPop;
-    float targetPop;
+    private bool isFaceDown = false;
+    private Sprite faceSprite = null;
 
     void Awake()
     {
@@ -37,11 +41,15 @@ public class CardView : MonoBehaviour
         data = card;
         index = i;
 
-        if (img != null) img.sprite = card.sprite;
+        faceSprite = (card != null) ? card.sprite : null;
+        isFaceDown = false;
+
+        if (img != null && faceSprite != null)
+            img.sprite = faceSprite;
 
         selected = false;
-        targetPop = 0f;
         currentPop = 0f;
+        targetPop = 0f;
     }
 
     public void SetLayout(Vector2 pos, float rotZ)
@@ -60,5 +68,21 @@ public class CardView : MonoBehaviour
     {
         selected = up;
         targetPop = up ? popAmount : 0f;
+    }
+
+    public void SetFaceDown(Sprite backSprite)
+    {
+        isFaceDown = true;
+
+        if (img != null && backSprite != null)
+            img.sprite = backSprite;
+    }
+
+    public void SetFaceUp()
+    {
+        isFaceDown = false;
+
+        if (img != null && faceSprite != null)
+            img.sprite = faceSprite;
     }
 }

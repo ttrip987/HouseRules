@@ -542,7 +542,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 378477478}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: fff3b893a514ab343b2b565bf04b6267, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 1c5c5bb0f2425434e903bf2a52f6bf15, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -1323,7 +1323,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -690.44, y: 113}
+  m_AnchoredPosition: {x: -677.9994, y: 113}
   m_SizeDelta: {x: 375.12, y: 51.75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &719274527
@@ -1380,7 +1380,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1409,7 +1409,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 15.000557, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2132,7 +2132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadeCanvasGroup: {fileID: 866591846}
-  fadeDuration: 1
+  fadeDuration: 2
 --- !u!4 &1074460652
 Transform:
   m_ObjectHideFlags: 0

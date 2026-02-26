@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Harvey to Wesley
   m_EditorClassIdentifier: 
-  line: 'Hey. '
+  line: Just got here.
   speakerName: Harvey
   choices: []
   nextNode: {fileID: 11400000, guid: 4e6c540f194edb74282c571cd1d1e4b6, type: 2}
