@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: (LOoking around the venue
   m_EditorClassIdentifier: 
-  line: Just looking around to be honest. Maybe get a drink but theres no bartender
-    just evidence of one by the looks of the man over there.
+  line: Just looking around to be honest. Might get a drink, but theres no bartender,
+    just one man sitting alone.
   speakerName: Harvey
   choices: []
   nextNode: {fileID: 11400000, guid: b89f6a455a997f841a85c0185d10c97c, type: 2}

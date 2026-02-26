@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Play my nephew wesley
   m_EditorClassIdentifier: 
-  line: 'Ive got to head off but You should play my nephew, he will buy you in dont
-    worry. What did you say your name was by the way? I havent seen you around. '
+  line: 'I''ve got to head off, but you should play my nephew. He''ll be a good warm-up
+    and he''ll buy you in. By the way, what did you say your name was? Haven''t seen
+    you around. '
   speakerName: Bruce
   choices: []
   nextNode: {fileID: 11400000, guid: ca404b7b84ba8da498c4eb8192677aaa, type: 2}
