@@ -11,15 +11,23 @@ public class UIManager : MonoBehaviour
     public GameObject cardPrefab;
     public TMP_Text resultText;
 
+    [Header("Dealer Hidden Card")]
+    public Sprite dealerBackSprite;
+
+    [Header("Fan Settings (Player)")]
     public float playerSpacing = 95f;
     public float playerCurve = 18f;
     public float playerRot = 10f;
 
+    [Header("Fan Settings (Dealer)")]
     public float dealerSpacing = 70f;
     public float dealerCurve = 10f;
     public float dealerRot = 6f;
 
-    void Awake() { Instance = this; }
+    void Awake()
+    {
+        Instance = this;
+    }
 
     public void RefreshHands()
     {
@@ -64,7 +72,6 @@ public class UIManager : MonoBehaviour
 
             float x = t * spacing;
             float y = (-Mathf.Abs(t) * curve) * (invert ? -1f : 1f);
-
             float rotZ = (-t * rotAmt) * (invert ? -1f : 1f);
 
             RectTransform rt = panel.GetChild(i).GetComponent<RectTransform>();
@@ -88,6 +95,24 @@ public class UIManager : MonoBehaviour
     public void ShowResult(string text)
     {
         if (resultText != null) resultText.text = text;
+    }
+
+    public void HideDealerCards()
+    {
+        for (int i = 0; i < dealerPanel.childCount; i++)
+        {
+            CardView view = dealerPanel.GetChild(i).GetComponent<CardView>();
+            if (view != null) view.SetFaceDown(dealerBackSprite);
+        }
+    }
+
+    public void RevealDealerCards()
+    {
+        for (int i = 0; i < dealerPanel.childCount; i++)
+        {
+            CardView view = dealerPanel.GetChild(i).GetComponent<CardView>();
+            if (view != null) view.SetFaceUp();
+        }
     }
 
     public void PopUpWinningCards(List<CardData> winningCards, Transform panel)

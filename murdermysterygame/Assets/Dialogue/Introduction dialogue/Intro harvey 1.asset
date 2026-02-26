@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Intro harvey 1
   m_EditorClassIdentifier: 
   line: What did you find?
-  speakerName: harvey
+  speakerName: Harvey
   choices: []
   nextNode: {fileID: 11400000, guid: 9c2a6d5c216b8b848bede069e281c2dc, type: 2}

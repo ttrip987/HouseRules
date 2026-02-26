@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: names Harvey
   m_EditorClassIdentifier: 
-  line: 'Names Harvey. im with the Marino family but the rest couldnt make it. '
-  speakerName: 'Harvey. '
+  line: 'The name''s Harvey. I''m with the Marino family, the rest couldn''t make
+    it. '
+  speakerName: Harvey
   choices: []
   nextNode: {fileID: 11400000, guid: 33e689113c9b5324685d73ee53daa659, type: 2}

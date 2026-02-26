@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Harvey to Bruce 1
   m_EditorClassIdentifier: 
-  line: And a good day to you as well.
+  line: Good day to you as well.
   speakerName: Harvey
   choices: []
   nextNode: {fileID: 11400000, guid: c6a0fd219b7bc29449f9a9c19c08fb47, type: 2}

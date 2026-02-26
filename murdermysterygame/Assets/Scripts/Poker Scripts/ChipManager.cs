@@ -100,7 +100,7 @@ public class ChipManager : MonoBehaviour
     public void UpdateUI()
     {
         if (playerText) playerText.text = $"Player: {playerChips}";
-        if (dealerText) dealerText.text = $"Dealer: {dealerChips}";
+        if (dealerText) dealerText.text = $"Wesley: {dealerChips}";
         if (potText) potText.text = $"Pot: {pot}";
 
         // Update chip stacks visually

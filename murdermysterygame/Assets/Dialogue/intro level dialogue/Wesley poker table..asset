@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Wesley poker table.
   m_EditorClassIdentifier: 
-  line: Soooooo, did you want to play or like?
-  speakerName: 'Wesley. '
+  line: Well I'm free now if you haven't played a game. The tournament starts tomorrow,
+    but some extra practice can't hurt.
+  speakerName: Wesley
   choices:
   - choiceText: 'Yeah '
     nextNode: {fileID: 11400000, guid: 7e6cc99e021727d4d91bfada08af5b8c, type: 2}

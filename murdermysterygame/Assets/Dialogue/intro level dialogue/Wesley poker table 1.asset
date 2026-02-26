@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Wesley poker table 1
   m_EditorClassIdentifier: 
-  line: 'Hey man. '
+  line: Hey there! Haven't seen you around.
   speakerName: Wesley
   choices: []
   nextNode: {fileID: 11400000, guid: 723c44f740c254f4a9f62ce386447429, type: 2}
