@@ -1,29 +1,44 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class DrawPokerGameManager : MonoBehaviour
 {
     public static DrawPokerGameManager Instance;
 
     public Deck deck;
-
     public PlayerHand player;
     public PlayerHand dealer;
 
-    public bool canDraw;
+    public int ante = 100;
+    public float nextRoundDelay = 2.0f;
 
-    void Start()
-    {
-        StartNewRound();
-    }
+    private bool discardPhase = false;
+    private int cardsDiscarded = 0;
 
     void Awake()
     {
         Instance = this;
     }
 
+    void Start()
+    {
+        StartNewRound();
+    }
+
     public void StartNewRound()
     {
+        if (ChipManager.Instance != null && ChipManager.Instance.IsGameOver())
+            return;
+
+        if (ChipManager.Instance != null)
+        {
+            if (!ChipManager.Instance.PlayerSpend(ante) || !ChipManager.Instance.DealerSpend(ante))
+            {
+                ChipManager.Instance.IsGameOver();
+                return;
+            }
+        }
+
         deck.ResetDeck();
 
         player = new PlayerHand();
@@ -32,33 +47,60 @@ public class DrawPokerGameManager : MonoBehaviour
         player.Draw(deck, 5);
         dealer.Draw(deck, 5);
 
-        canDraw = true;
+        discardPhase = true;
+        cardsDiscarded = 0;
 
         UIManager.Instance.RefreshHands();
-        UIManager.Instance.ShowResult("");
+        UIManager.Instance.ShowResult("Select cards and press Discard");
     }
 
-    public void PlayerDraw(List<int> discard)
+    public void PlayerDiscard()
     {
-        if (!canDraw) return;
+        if (!discardPhase) return;
 
-        player.Discard(discard);
-        player.Draw(deck, discard.Count);
+        List<int> discardIndices = new List<int>();
+
+        for (int i = 0; i < UIManager.Instance.playerPanel.childCount; i++)
+        {
+            CardView view = UIManager.Instance.playerPanel.GetChild(i).GetComponent<CardView>();
+            if (view != null && view.selected)
+                discardIndices.Add(i);
+        }
+
+        cardsDiscarded = discardIndices.Count;
+
+        if (cardsDiscarded == 0)
+        {
+            UIManager.Instance.ShowResult("No cards selected. Press Draw to finish.");
+            return;
+        }
+
+        player.Discard(discardIndices);
+
+        UIManager.Instance.RefreshHands();
+        UIManager.Instance.ShowResult("Press Draw to replace cards");
+    }
+
+    public void PlayerDraw()
+    {
+        if (!discardPhase) return;
+
+        if (cardsDiscarded > 0)
+            player.Draw(deck, cardsDiscarded);
 
         DealerAI();
 
-        canDraw = false;
+        discardPhase = false;
 
-        DetermineWinner();
         UIManager.Instance.RefreshHands();
+        DetermineWinner();
     }
 
-    void DealerAI()
+    public void DealerAI()
     {
-        Dictionary<Rank, int> counts =
-            new Dictionary<Rank, int>();
+        Dictionary<Rank, int> counts = new Dictionary<Rank, int>();
 
-        foreach (var c in dealer.cards)
+        foreach (CardData c in dealer.cards)
         {
             if (!counts.ContainsKey(c.rank))
                 counts[c.rank] = 0;
@@ -78,34 +120,44 @@ public class DrawPokerGameManager : MonoBehaviour
         dealer.Draw(deck, discard.Count);
     }
 
-    void DetermineWinner()
+    public void DetermineWinner()
     {
-        var p = HandEvaluator.EvaluateHand(player.cards);
-        var d = HandEvaluator.EvaluateHand(dealer.cards);
+        var playerResult = HandEvaluator.EvaluateHandWithCards(player.cards);
+        var dealerResult = HandEvaluator.EvaluateHandWithCards(dealer.cards);
 
-        string result =
-            p > d ? "Player Wins!" :
-            d > p ? "Dealer Wins!" :
-            "Tie!";
+        long playerScore = playerResult.score;
+        long dealerScore = dealerResult.score;
 
-        UIManager.Instance.ShowResult(
-            $"Player: {p}\nDealer: {d}\n{result}");
-    }
+        string result;
 
-    public void OnDrawButton()
-    {
-    
-        List<int> discard = new List<int>();
-
-        for (int i = 0; i < player.cards.Count; i++)
+        if (playerScore > dealerScore)
         {
-        
-            var cardView = UIManager.Instance.playerPanel.GetChild(i).GetComponent<CardView>();
-            if (cardView.selected)
-                discard.Add(i);
+            result = "Player Wins!";
+            if (ChipManager.Instance != null) ChipManager.Instance.PayoutToPlayer();
+        }
+        else if (dealerScore > playerScore)
+        {
+            result = "Dealer Wins!";
+            if (ChipManager.Instance != null) ChipManager.Instance.PayoutToDealer();
+        }
+        else
+        {
+            result = "Tie!";
+            if (ChipManager.Instance != null) ChipManager.Instance.SplitPot();
         }
 
-        PlayerDraw(discard);
+        UIManager.Instance.ShowResult(
+            "Player: " + playerResult.handName +
+            "\nDealer: " + dealerResult.handName +
+            "\n\n" + result
+        );
+
+        UIManager.Instance.PopUpWinningCards(playerResult.winningCards, UIManager.Instance.playerPanel);
+        UIManager.Instance.PopUpWinningCards(dealerResult.winningCards, UIManager.Instance.dealerPanel);
+
+        if (ChipManager.Instance != null && ChipManager.Instance.IsGameOver())
+            return;
+
+        Invoke(nameof(StartNewRound), nextRoundDelay);
     }
 }
-

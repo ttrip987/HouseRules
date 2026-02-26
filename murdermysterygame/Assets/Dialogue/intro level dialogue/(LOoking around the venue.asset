@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
+  m_Name: (LOoking around the venue
+  m_EditorClassIdentifier: 
+  line: Just looking around to be honest. Might get a drink, but theres no bartender,
+    just one man sitting alone.
+  speakerName: Harvey
+  choices: []
+  nextNode: {fileID: 11400000, guid: b89f6a455a997f841a85c0185d10c97c, type: 2}

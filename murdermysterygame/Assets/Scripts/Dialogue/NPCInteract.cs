@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class NPCInteract : MonoBehaviour
 {
-    public DialogueNode startingNode;
+    public DialogueNodeAsset startingNode;
 
     private bool playerInRange;
     private bool hasSpoken;
@@ -15,6 +15,9 @@ public class NPCInteract : MonoBehaviour
 
     void Update()
     {
+        if (dialogue != null && dialogue.IsOpen)
+            return; 
+
         if (playerInRange && !hasSpoken && Input.GetKeyDown(KeyCode.Space))
         {
             dialogue.StartDialogue(startingNode);
@@ -33,7 +36,7 @@ public class NPCInteract : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
-            hasSpoken = false; // remove if NPC should talk only once
+            hasSpoken = false; 
         }
     }
 }

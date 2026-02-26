@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
+  m_Name: Intro Harvey 2
+  m_EditorClassIdentifier: 
+  line: Right- so, let me get this straight. You want me to want right into the lion's
+    den, no gun, no backup, and limited contact?
+  speakerName: Harvey
+  choices: []
+  nextNode: {fileID: 11400000, guid: d1865c1e7caee2044bde1cd70986f86b, type: 2}

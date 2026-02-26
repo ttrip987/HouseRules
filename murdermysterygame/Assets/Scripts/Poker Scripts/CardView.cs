@@ -1,56 +1,88 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class CardView : MonoBehaviour
 {
-    public Image image;
-
     public CardData data;
     public int index;
     public bool selected;
 
-    private RectTransform rectTransform;
-    private Vector2 basePosition;
+    private RectTransform rt;
+    private Image img;
 
-    public float liftAmount = 40f;
-    public float moveSpeed = 10f;
+    [Header("Pop Settings")]
+    public float popAmount = 35f;
+    public float popSpeed = 12f;
+
+    private Vector2 basePos;
+    private float baseRotZ;
+
+    private float currentPop;
+    private float targetPop;
+
+    private bool isFaceDown = false;
+    private Sprite faceSprite = null;
 
     void Awake()
     {
-        rectTransform = GetComponent<RectTransform>();
+        rt = GetComponent<RectTransform>();
+        img = GetComponent<Image>();
+    }
+
+    void Update()
+    {
+        currentPop = Mathf.Lerp(currentPop, targetPop, Time.deltaTime * popSpeed);
+        rt.anchoredPosition = basePos + new Vector2(0f, currentPop);
+        rt.localRotation = Quaternion.Euler(0f, 0f, baseRotZ);
     }
 
     public void SetCard(CardData card, int i)
     {
         data = card;
         index = i;
-        image.sprite = card.sprite;
 
-        basePosition = rectTransform.anchoredPosition;
+        faceSprite = (card != null) ? card.sprite : null;
+        isFaceDown = false;
+
+        if (img != null && faceSprite != null)
+            img.sprite = faceSprite;
+
         selected = false;
+        currentPop = 0f;
+        targetPop = 0f;
+    }
+
+    public void SetLayout(Vector2 pos, float rotZ)
+    {
+        basePos = pos;
+        baseRotZ = rotZ;
     }
 
     public void ToggleSelect()
     {
         selected = !selected;
-        StopAllCoroutines();
-        StartCoroutine(MoveCard(selected));
+        targetPop = selected ? popAmount : 0f;
     }
 
-    IEnumerator MoveCard(bool up)
+    public void SetPop(bool up)
     {
-        Vector2 target = up
-            ? basePosition + Vector2.up * liftAmount
-            : basePosition;
+        selected = up;
+        targetPop = up ? popAmount : 0f;
+    }
 
-        while (Vector2.Distance(rectTransform.anchoredPosition, target) > 0.1f)
-        {
-            rectTransform.anchoredPosition =
-                Vector2.Lerp(rectTransform.anchoredPosition, target, Time.deltaTime * moveSpeed);
-            yield return null;
-        }
+    public void SetFaceDown(Sprite backSprite)
+    {
+        isFaceDown = true;
 
-        rectTransform.anchoredPosition = target;
+        if (img != null && backSprite != null)
+            img.sprite = backSprite;
+    }
+
+    public void SetFaceUp()
+    {
+        isFaceDown = false;
+
+        if (img != null && faceSprite != null)
+            img.sprite = faceSprite;
     }
 }
