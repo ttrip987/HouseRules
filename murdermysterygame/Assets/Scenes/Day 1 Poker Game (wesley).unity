@@ -445,7 +445,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deck: {fileID: 6747581461030456892, guid: a6a9ae7c56727294999cfe2b66939dc5, type: 3}
   ante: 1000
-  nextRoundDelay: 3
+  nextRoundDelay: 2.5
 --- !u!4 &95479511 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6544093871107055545, guid: c4cdec2a273cfef479e12b7f1aaa003c, type: 3}

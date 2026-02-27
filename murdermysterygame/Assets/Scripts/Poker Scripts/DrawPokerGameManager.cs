@@ -27,12 +27,17 @@ public class DrawPokerGameManager : MonoBehaviour
 
     public void StartNewRound()
     {
+        CancelInvoke(nameof(StartNewRound));
+
         if (ChipManager.Instance != null && ChipManager.Instance.IsGameOver())
             return;
 
         if (ChipManager.Instance != null)
         {
-            if (!ChipManager.Instance.PlayerSpend(ante) || !ChipManager.Instance.DealerSpend(ante))
+            bool pOk = ChipManager.Instance.PlayerSpend(ante);
+            bool dOk = ChipManager.Instance.DealerSpend(ante);
+
+            if (!pOk || !dOk)
             {
                 ChipManager.Instance.IsGameOver();
                 return;
@@ -51,6 +56,9 @@ public class DrawPokerGameManager : MonoBehaviour
         cardsDiscarded = 0;
 
         UIManager.Instance.RefreshHands();
+        UIManager.Instance.ResetCardPopups();
+        UIManager.Instance.HideDealerCards();
+
         UIManager.Instance.ShowResult("Select cards and press Discard");
     }
 
@@ -78,6 +86,9 @@ public class DrawPokerGameManager : MonoBehaviour
         player.Discard(discardIndices);
 
         UIManager.Instance.RefreshHands();
+        UIManager.Instance.ResetCardPopups();
+        UIManager.Instance.HideDealerCards();
+
         UIManager.Instance.ShowResult("Press Draw to replace cards");
     }
 
@@ -93,6 +104,8 @@ public class DrawPokerGameManager : MonoBehaviour
         discardPhase = false;
 
         UIManager.Instance.RefreshHands();
+        UIManager.Instance.RevealDealerCards();
+
         DetermineWinner();
     }
 
@@ -158,6 +171,7 @@ public class DrawPokerGameManager : MonoBehaviour
         if (ChipManager.Instance != null && ChipManager.Instance.IsGameOver())
             return;
 
+        CancelInvoke(nameof(StartNewRound));
         Invoke(nameof(StartNewRound), nextRoundDelay);
     }
 }
