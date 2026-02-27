@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Sick
   m_EditorClassIdentifier: 
-  line: Sick.
+  line: 'Sick '
   speakerName: Wesley
   choices: []
   nextNode: {fileID: 0}

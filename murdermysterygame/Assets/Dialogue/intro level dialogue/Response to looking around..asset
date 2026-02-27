@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Response to looking around.
   m_EditorClassIdentifier: 
-  line: 'Ah, yes. That is Mr. Carl, he has a bit of trouble with the bottle. '
+  line: 'Hah, yes that is Mr.Carl, He has a bit of trouble with the bottle. '
   speakerName: Bruce
   choices: []
   nextNode: {fileID: 11400000, guid: 9d6561aade6ae3742a0f0704b0d4121b, type: 2}
