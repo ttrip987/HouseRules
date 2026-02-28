@@ -29,18 +29,35 @@ public class DrawPokerGameManager : MonoBehaviour
     {
         CancelInvoke(nameof(StartNewRound));
 
-        if (ChipManager.Instance != null && ChipManager.Instance.IsGameOver())
-            return;
+
+        bool showedAllInMsg = false;
 
         if (ChipManager.Instance != null)
         {
-            bool pOk = ChipManager.Instance.PlayerSpend(ante);
-            bool dOk = ChipManager.Instance.DealerSpend(ante);
+            int pPaid = ChipManager.Instance.PlayerPayUpTo(ante);
+            int dPaid = ChipManager.Instance.DealerPayUpTo(ante);
 
-            if (!pOk || !dOk)
+            // If somehow both have 0, nothing can happen.
+            if (pPaid == 0 && dPaid == 0)
             {
                 ChipManager.Instance.IsGameOver();
                 return;
+            }
+
+            if (pPaid < ante && dPaid < ante)
+            {
+                UIManager.Instance.ShowResult("Both players are ALL-IN on the ante!");
+                showedAllInMsg = true;
+            }
+            else if (pPaid < ante)
+            {
+                UIManager.Instance.ShowResult("Player is ALL-IN on the ante!");
+                showedAllInMsg = true;
+            }
+            else if (dPaid < ante)
+            {
+                UIManager.Instance.ShowResult("Wesley is ALL-IN on the ante!");
+                showedAllInMsg = true;
             }
         }
 
@@ -59,6 +76,19 @@ public class DrawPokerGameManager : MonoBehaviour
         UIManager.Instance.ResetCardPopups();
         UIManager.Instance.HideDealerCards();
 
+        
+        if (showedAllInMsg)
+        {
+            Invoke(nameof(ShowDiscardPrompt), 1.0f);
+        }
+        else
+        {
+            ShowDiscardPrompt();
+        }
+    }
+
+    private void ShowDiscardPrompt()
+    {
         UIManager.Instance.ShowResult("Select cards and press Discard");
     }
 
@@ -168,6 +198,7 @@ public class DrawPokerGameManager : MonoBehaviour
         UIManager.Instance.PopUpWinningCards(playerResult.winningCards, UIManager.Instance.playerPanel);
         UIManager.Instance.PopUpWinningCards(dealerResult.winningCards, UIManager.Instance.dealerPanel);
 
+        
         if (ChipManager.Instance != null && ChipManager.Instance.IsGameOver())
             return;
 
