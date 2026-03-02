@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,6 +24,8 @@ public class CardView : MonoBehaviour
     private bool isFaceDown = false;
     private Sprite faceSprite = null;
 
+    private Vector2 animOffset = Vector2.zero;
+
     void Awake()
     {
         rt = GetComponent<RectTransform>();
@@ -32,7 +35,8 @@ public class CardView : MonoBehaviour
     void Update()
     {
         currentPop = Mathf.Lerp(currentPop, targetPop, Time.deltaTime * popSpeed);
-        rt.anchoredPosition = basePos + new Vector2(0f, currentPop);
+
+        rt.anchoredPosition = basePos + animOffset + new Vector2(0f, currentPop);
         rt.localRotation = Quaternion.Euler(0f, 0f, baseRotZ);
     }
 
@@ -50,6 +54,8 @@ public class CardView : MonoBehaviour
         selected = false;
         currentPop = 0f;
         targetPop = 0f;
+
+        animOffset = Vector2.zero;
     }
 
     public void SetLayout(Vector2 pos, float rotZ)
@@ -70,6 +76,12 @@ public class CardView : MonoBehaviour
         targetPop = up ? popAmount : 0f;
     }
 
+    public void ClearSelection()
+    {
+        selected = false;
+        targetPop = 0f;
+    }
+
     public void SetFaceDown(Sprite backSprite)
     {
         isFaceDown = true;
@@ -84,5 +96,49 @@ public class CardView : MonoBehaviour
 
         if (img != null && faceSprite != null)
             img.sprite = faceSprite;
+    }
+
+    public void SnapToWorld(Vector3 worldPos)
+    {
+        RectTransform parentRT = transform.parent as RectTransform;
+        Vector2 local = parentRT.InverseTransformPoint(worldPos);
+        animOffset = local - basePos;
+    }
+
+    public IEnumerator FlyToWorld(Vector3 worldTarget, float duration)
+    {
+        RectTransform parentRT = transform.parent as RectTransform;
+        Vector2 targetLocal = parentRT.InverseTransformPoint(worldTarget);
+
+        Vector2 start = animOffset;
+        Vector2 end = targetLocal - basePos;
+
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.unscaledDeltaTime / Mathf.Max(0.0001f, duration);
+            float eased = 1f - Mathf.Pow(1f - t, 3f);
+            animOffset = Vector2.Lerp(start, end, eased);
+            yield return null;
+        }
+
+        animOffset = end;
+    }
+
+    public IEnumerator FlyHome(float duration)
+    {
+        Vector2 start = animOffset;
+        Vector2 end = Vector2.zero;
+
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.unscaledDeltaTime / Mathf.Max(0.0001f, duration);
+            float eased = 1f - Mathf.Pow(1f - t, 3f);
+            animOffset = Vector2.Lerp(start, end, eased);
+            yield return null;
+        }
+
+        animOffset = Vector2.zero;
     }
 }
