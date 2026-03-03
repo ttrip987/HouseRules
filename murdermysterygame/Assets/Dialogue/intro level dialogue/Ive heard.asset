@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Ive heard
   m_EditorClassIdentifier: 
-  line: I've heard about that incident. It's a sad thing that happened to them, great
-    people they are. Were. That's just how it goes once you start to get a little
-    sloppy. No disrespect to your family. Anyway, have fun while your here. I hope
-    we get the chance to play each other.
+  line: 'Ive heard about that incident, its a sad thing that has happened to them,
+    great people they are. Anyway have fun while your here and hopefully we play
+    each other in the next few days. '
   speakerName: Bruce
   choices: []
   nextNode: {fileID: 11400000, guid: 92b84268e8eb5c84085d83e86d8e5462, type: 2}

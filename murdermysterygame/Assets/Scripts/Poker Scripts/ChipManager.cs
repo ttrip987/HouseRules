@@ -20,16 +20,14 @@ public class ChipManager : MonoBehaviour
     public TMP_Text gameOverText;
 
     [Header("Chip Images")]
-    public GameObject playerChipParent;  
+    public GameObject playerChipParent;
     public GameObject dealerChipParent;
-    public GameObject chipPrefab;        
+    public GameObject chipPrefab;
     public Sprite chip1Sprite;
     public Sprite chip5Sprite;
     public Sprite chip25Sprite;
     public Sprite chip100Sprite;
     public Sprite chip500Sprite;
-
-    
 
     void Awake()
     {
@@ -37,7 +35,7 @@ public class ChipManager : MonoBehaviour
         UpdateUI();
     }
 
-
+   
     public bool PlayerSpend(int amount)
     {
         if (playerChips < amount) return false;
@@ -47,6 +45,7 @@ public class ChipManager : MonoBehaviour
         return true;
     }
 
+    
     public bool DealerSpend(int amount)
     {
         if (dealerChips < amount) return false;
@@ -56,7 +55,26 @@ public class ChipManager : MonoBehaviour
         return true;
     }
 
- 
+    
+    public int PlayerPayUpTo(int amount)
+    {
+        int paid = Mathf.Clamp(amount, 0, playerChips);
+        playerChips -= paid;
+        pot += paid;
+        UpdateUI();
+        return paid;
+    }
+
+    
+    public int DealerPayUpTo(int amount)
+    {
+        int paid = Mathf.Clamp(amount, 0, dealerChips);
+        dealerChips -= paid;
+        pot += paid;
+        UpdateUI();
+        return paid;
+    }
+
     public void PayoutToPlayer()
     {
         playerChips += pot;
@@ -71,6 +89,14 @@ public class ChipManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void SplitPot()
+    {
+        int half = pot / 2;
+        playerChips += half;
+        dealerChips += pot - half;
+        pot = 0;
+        UpdateUI();
+    }
 
     public bool IsGameOver()
     {
@@ -103,31 +129,31 @@ public class ChipManager : MonoBehaviour
         if (dealerText) dealerText.text = $"Wesley: {dealerChips}";
         if (potText) potText.text = $"Pot: {pot}";
 
-        // Update chip stacks visually
         UpdateChipStack(playerChips, playerChipParent);
         UpdateChipStack(dealerChips, dealerChipParent);
     }
 
-
     void UpdateChipStack(int amount, GameObject parent)
     {
+        if (parent == null || chipPrefab == null) return;
 
         foreach (Transform child in parent.transform)
             Destroy(child.gameObject);
 
-
         List<(int, Sprite)> chipValues = new List<(int, Sprite)>()
         {
-            (10000, chip500Sprite),
-            (1000, chip100Sprite),
-            (500, chip25Sprite),
-            (100, chip5Sprite),
-            (50, chip1Sprite)
+            (500, chip500Sprite),
+            (100, chip100Sprite),
+            (25, chip25Sprite),
+            (5, chip5Sprite),
+            (1, chip1Sprite)
         };
 
-        float yOffset = 0f; 
+        float yOffset = 0f;
         foreach (var (value, sprite) in chipValues)
         {
+            if (value <= 0 || sprite == null) continue;
+
             int count = amount / value;
             amount %= value;
 
@@ -138,17 +164,8 @@ public class ChipManager : MonoBehaviour
 
                 RectTransform rt = chipGO.GetComponent<RectTransform>();
                 rt.anchoredPosition = new Vector2(0, yOffset);
-                yOffset += 10f; 
+                yOffset += 10f;
             }
         }
-    }
-
-    public void SplitPot()
-    {
-        int half = pot / 2;
-        playerChips += half;
-        dealerChips += pot - half;
-        pot = 0;
-        UpdateUI();
     }
 }
