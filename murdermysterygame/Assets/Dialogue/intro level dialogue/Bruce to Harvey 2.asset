@@ -12,13 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Bruce to Harvey 2
   m_EditorClassIdentifier: 
-  line: You seem to be here quite early. Why is that?
+  line: You seem to be here very early. Why is that?
   speakerName: Bruce
   choices:
-  - choiceText: Just looking around the venue.
+  - choiceText: Just looking around the venue
     nextNode: {fileID: 11400000, guid: 09d809f31c24e804faa6ad6114aa5b9b, type: 2}
-    action: 0
-  - choiceText: You also seem to be here early.
+  - choiceText: You also seem to be here early
     nextNode: {fileID: 11400000, guid: f0582dea20384dd468d8354f7f0cc638, type: 2}
-    action: 0
   nextNode: {fileID: 0}

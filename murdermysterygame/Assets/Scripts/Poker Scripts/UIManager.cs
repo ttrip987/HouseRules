@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 
@@ -10,6 +11,14 @@ public class UIManager : MonoBehaviour
     public Transform dealerPanel;
     public GameObject cardPrefab;
     public TMP_Text resultText;
+
+    [Header("Piles (UI Anchors)")]
+    public Transform discardPileAnchor;
+    public Transform drawPileAnchor;
+
+    [Header("Animation")]
+    public float flyDuration = 0.22f;
+    public float stagger = 0.06f;
 
     [Header("Dealer Hidden Card")]
     public Sprite dealerBackSprite;
@@ -24,26 +33,16 @@ public class UIManager : MonoBehaviour
     public float dealerCurve = 10f;
     public float dealerRot = 6f;
 
+    private const int HAND_SIZE = 5;
+
     void Awake()
     {
         Instance = this;
     }
 
-    public void RefreshHands()
+    void EnsureHandObjects(Transform panel)
     {
-        ClearPanel(playerPanel);
-        ClearPanel(dealerPanel);
-
-        SpawnHand(DrawPokerGameManager.Instance.player.cards, playerPanel);
-        SpawnHand(DrawPokerGameManager.Instance.dealer.cards, dealerPanel);
-
-        ArrangeFan(playerPanel, playerSpacing, playerCurve, playerRot, false);
-        ArrangeFan(dealerPanel, dealerSpacing, dealerCurve, dealerRot, true);
-    }
-
-    void SpawnHand(List<CardData> handCards, Transform panel)
-    {
-        for (int i = 0; i < handCards.Count; i++)
+        while (panel.childCount < HAND_SIZE)
         {
             GameObject cardGO = Instantiate(cardPrefab, panel);
             cardGO.transform.localScale = Vector3.one;
@@ -53,10 +52,35 @@ public class UIManager : MonoBehaviour
             rt.anchorMax = new Vector2(0.5f, 0.5f);
             rt.pivot = new Vector2(0.5f, 0.5f);
             rt.localRotation = Quaternion.identity;
-
-            CardView view = cardGO.GetComponent<CardView>();
-            if (view != null) view.SetCard(handCards[i], i);
         }
+
+        for (int i = panel.childCount - 1; i >= HAND_SIZE; i--)
+            Destroy(panel.GetChild(i).gameObject);
+    }
+
+    public void RefreshHands()
+    {
+        EnsureHandObjects(playerPanel);
+        EnsureHandObjects(dealerPanel);
+
+        // Player
+        List<CardData> pCards = DrawPokerGameManager.Instance.player.cards;
+        for (int i = 0; i < HAND_SIZE; i++)
+        {
+            CardView view = playerPanel.GetChild(i).GetComponent<CardView>();
+            if (view != null) view.SetCard(pCards[i], i);
+        }
+
+        // Dealer
+        List<CardData> dCards = DrawPokerGameManager.Instance.dealer.cards;
+        for (int i = 0; i < HAND_SIZE; i++)
+        {
+            CardView view = dealerPanel.GetChild(i).GetComponent<CardView>();
+            if (view != null) view.SetCard(dCards[i], i);
+        }
+
+        ArrangeFan(playerPanel, playerSpacing, playerCurve, playerRot, false);
+        ArrangeFan(dealerPanel, dealerSpacing, dealerCurve, dealerRot, true);
     }
 
     void ArrangeFan(Transform panel, float spacing, float curve, float rotAmt, bool invert)
@@ -84,12 +108,6 @@ public class UIManager : MonoBehaviour
                 rt.localRotation = Quaternion.Euler(0f, 0f, rotZ);
             }
         }
-    }
-
-    void ClearPanel(Transform panel)
-    {
-        for (int i = panel.childCount - 1; i >= 0; i--)
-            Destroy(panel.GetChild(i).gameObject);
     }
 
     public void ShowResult(string text)
@@ -137,6 +155,58 @@ public class UIManager : MonoBehaviour
         {
             CardView view = panel.GetChild(i).GetComponent<CardView>();
             if (view != null) view.SetPop(false);
+        }
+    }
+
+    // -----------------------------
+    // Animation Helpers
+    // -----------------------------
+
+    public IEnumerator AnimateDiscard(Transform panel, List<int> indices, float duration, float waitStagger)
+    {
+        if (discardPileAnchor == null) yield break;
+
+        indices.Sort();
+        for (int k = 0; k < indices.Count; k++)
+        {
+            int i = indices[k];
+            if (i < 0 || i >= panel.childCount) continue;
+
+            CardView view = panel.GetChild(i).GetComponent<CardView>();
+            if (view != null)
+                yield return view.FlyToWorld(discardPileAnchor.position, duration);
+
+            yield return new WaitForSecondsRealtime(waitStagger);
+        }
+    }
+
+    public IEnumerator AnimateDraw(Transform panel, List<int> indices, float duration, float waitStagger)
+    {
+        if (drawPileAnchor == null) yield break;
+
+        indices.Sort();
+        for (int k = 0; k < indices.Count; k++)
+        {
+            int i = indices[k];
+            if (i < 0 || i >= panel.childCount) continue;
+
+            CardView view = panel.GetChild(i).GetComponent<CardView>();
+            if (view != null)
+            {
+                view.SnapToWorld(drawPileAnchor.position);
+                yield return view.FlyHome(duration);
+            }
+
+            yield return new WaitForSecondsRealtime(waitStagger);
+        }
+    }
+
+    public void ClearPlayerSelections()
+    {
+        for (int i = 0; i < playerPanel.childCount; i++)
+        {
+            CardView view = playerPanel.GetChild(i).GetComponent<CardView>();
+            if (view != null) view.ClearSelection();
         }
     }
 }
