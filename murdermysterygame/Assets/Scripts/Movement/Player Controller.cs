@@ -16,10 +16,9 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        
-        rb.gravityScale = 0;               
-        rb.freezeRotation = true;         
-        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous; 
+        rb.gravityScale = 0f;
+        rb.freezeRotation = true;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
     }
 
     void Update()
@@ -32,15 +31,12 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-       
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
 
-        
         if (input.x != 0)
             input.y = 0;
 
-        
         if (input.x > 0)
             spriteRenderer.flipX = false;
         else if (input.x < 0)
@@ -51,7 +47,6 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        
         rb.velocity = input.normalized * moveSpeed;
     }
 
@@ -64,10 +59,8 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("IsMoving", false);
             return;
         }
-        else
-        {
-            animator.SetBool("IsMoving", true);
-        }
+
+        animator.SetBool("IsMoving", true);
 
         if (input.y > 0.3f)
             animator.SetBool("MovingUp", true);
