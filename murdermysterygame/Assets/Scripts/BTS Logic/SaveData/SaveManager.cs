@@ -10,7 +10,7 @@ public class SaveManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
@@ -24,21 +24,24 @@ public class SaveManager : MonoBehaviour
 
     public void SaveGame()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        SaveData data = new SaveData();
 
-        if (player == null)
-        {
-            Debug.LogError("Player not found!");
-            return;
-        }
-
-        GameSaveData data = new GameSaveData();
         data.sceneName = SceneManager.GetActiveScene().name;
 
-        Vector3 pos = player.transform.position;
-        data.playerPosition = new float[] { pos.x, pos.y, pos.z };
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Vector3 pos = player.transform.position;
+            data.playerX = pos.x;
+            data.playerY = pos.y;
+            data.playerZ = pos.z;
+        }
 
-        data.inventory = InventoryManager.Instance.items;
+        if (CreditManager.Instance != null)
+            data.credits = CreditManager.Instance.GetCredits();
+
+        if (InventoryManager.Instance != null)
+            data.inventoryItems = new System.Collections.Generic.List<string>(InventoryManager.Instance.items);
 
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(savePath, json);
@@ -50,29 +53,26 @@ public class SaveManager : MonoBehaviour
     {
         if (!File.Exists(savePath))
         {
-            Debug.LogWarning("No save file found");
+            Debug.LogWarning("No save file found.");
             return;
         }
 
         string json = File.ReadAllText(savePath);
-        GameSaveData data = JsonUtility.FromJson<GameSaveData>(json);
+        SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+        if (CreditManager.Instance != null)
+            CreditManager.Instance.SetCredits(data.credits);
+
+        if (InventoryManager.Instance != null)
+            InventoryManager.Instance.SetInventory(data.inventoryItems);
 
         SceneManager.sceneLoaded += (scene, mode) =>
         {
-            if (scene.name != data.sceneName) return;
-
             GameObject player = GameObject.FindGameObjectWithTag("Player");
-
             if (player != null)
             {
-                player.transform.position = new Vector3(
-                    data.playerPosition[0],
-                    data.playerPosition[1],
-                    data.playerPosition[2]
-                );
+                player.transform.position = new Vector3(data.playerX, data.playerY, data.playerZ);
             }
-
-            InventoryManager.Instance.items = data.inventory;
         };
 
         SceneManager.LoadScene(data.sceneName);

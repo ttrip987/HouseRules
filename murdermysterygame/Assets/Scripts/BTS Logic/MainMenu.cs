@@ -108,4 +108,9 @@ public class MainMenu : MonoBehaviour
         Debug.Log("Quitting Game");
         Application.Quit();
     }
+
+    public void LoadGame()
+    {
+        SaveManager.Instance.LoadGame();
+    }
 }

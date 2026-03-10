@@ -20,6 +20,9 @@ public class DrawPokerGameManager : MonoBehaviour
 
     private bool discardPhase = false;
 
+    public int winCreditReward = 25;
+    public int bigWinCreditReward = 100;
+
     // Stores last chosen indices so Draw knows what to replace
     private List<int> lastDiscardIndices = new List<int>();
 
@@ -280,5 +283,19 @@ public class DrawPokerGameManager : MonoBehaviour
 
         CancelInvoke(nameof(StartNewRound));
         Invoke(nameof(StartNewRound), nextRoundDelay);
+    }
+
+    void CheckForMatchEnd()
+    {
+        if (ChipManager.Instance == null)
+            return;
+
+        if (ChipManager.Instance.dealerChips <= 0)
+        {
+            if (CreditManager.Instance != null)
+                CreditManager.Instance.AddCredits(bigWinCreditReward);
+
+            Debug.Log("Player beat the dealer and earned permanent credits!");
+        }
     }
 }
