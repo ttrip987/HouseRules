@@ -12,19 +12,12 @@ public class DrawPokerGameManager : MonoBehaviour
 
     public int ante = 100;
     public float nextRoundDelay = 2.0f;
-
-    [Header("Discard/Draw cycles per round")]
-    public int maxCycles = 2;
-
-    private int currentCycle = 0;
-
-    private bool discardPhase = false;
+    public float revealDelay = 1.0f;
 
     public int winCreditReward = 25;
     public int bigWinCreditReward = 100;
 
-    // Stores last chosen indices so Draw knows what to replace
-    private List<int> lastDiscardIndices = new List<int>();
+    private bool roundInProgress = false;
 
     void Awake()
     {
@@ -36,7 +29,10 @@ public class DrawPokerGameManager : MonoBehaviour
         StartNewRound();
     }
 
-    public bool CanSelectDiscards() => discardPhase;
+    public bool CanSelectDiscards()
+    {
+        return false;
+    }
 
     public void StartNewRound()
     {
@@ -80,167 +76,43 @@ public class DrawPokerGameManager : MonoBehaviour
         player.Draw(deck, 5);
         dealer.Draw(deck, 5);
 
-        currentCycle = 0;
-        discardPhase = true;
-        lastDiscardIndices.Clear();
+        roundInProgress = true;
 
         UIManager.Instance.RefreshHands();
         UIManager.Instance.ResetCardPopups();
         UIManager.Instance.HideDealerCards();
         UIManager.Instance.ClearPlayerSelections();
 
-        if (showedAllInMsg) Invoke(nameof(ShowDiscardPrompt), 1.0f);
-        else ShowDiscardPrompt();
-    }
-
-    private void ShowDiscardPrompt()
-    {
-        UIManager.Instance.ShowResult($"Cycle {currentCycle + 1}/{maxCycles}: Select cards and press Discard");
-    }
-
-    // Button: Discard
-    public void PlayerDiscard()
-    {
-        if (!discardPhase) return;
-
-        List<int> discardIndices = new List<int>();
-
-        for (int i = 0; i < UIManager.Instance.playerPanel.childCount; i++)
+        if (PokerDialogueManager.Instance != null)
         {
-            CardView view = UIManager.Instance.playerPanel.GetChild(i).GetComponent<CardView>();
-            if (view != null && view.selected)
-                discardIndices.Add(i);
+            PokerDialogueManager.Instance.ShowRoundStartDialogue();
         }
-
-        discardIndices.Sort();
-        lastDiscardIndices = discardIndices;
-
-        if (lastDiscardIndices.Count == 0)
+        else
         {
-            UIManager.Instance.ShowResult("No cards selected. Press Draw to continue.");
+            if (showedAllInMsg)
+                Invoke(nameof(RevealAndScoreRound), 1.0f);
+            else
+                Invoke(nameof(RevealAndScoreRound), revealDelay);
+        }
+    }
+
+    public void ContinueFromDialogue()
+    {
+        if (!roundInProgress)
             return;
-        }
 
-        UIManager.Instance.ShowResult("Press Draw to replace cards");
+        CancelInvoke(nameof(RevealAndScoreRound));
+        Invoke(nameof(RevealAndScoreRound), revealDelay);
     }
 
-    // Button: Draw
-    public void PlayerDraw()
+    private void RevealAndScoreRound()
     {
-        if (!discardPhase) return;
-        StartCoroutine(PlayerCycleRoutine());
-    }
+        roundInProgress = false;
 
-    private IEnumerator PlayerCycleRoutine()
-    {
-        // PLAYER discard/draw (with animation)
-        if (lastDiscardIndices.Count > 0)
-        {
-            // 1) animate discards
-            yield return UIManager.Instance.AnimateDiscard(
-                UIManager.Instance.playerPanel,
-                lastDiscardIndices,
-                UIManager.Instance.flyDuration,
-                UIManager.Instance.stagger);
+        UIManager.Instance.RefreshHands();
+        UIManager.Instance.RevealDealerCards();
 
-            // 2) apply data change
-            player.Discard(lastDiscardIndices);
-            player.Draw(deck, lastDiscardIndices.Count);
-
-            // 3) refresh to show new cards in their slots
-            UIManager.Instance.RefreshHands();
-            UIManager.Instance.HideDealerCards();
-
-            // 4) animate draws (new cards fly in)
-            yield return UIManager.Instance.AnimateDraw(
-                UIManager.Instance.playerPanel,
-                lastDiscardIndices,
-                UIManager.Instance.flyDuration,
-                UIManager.Instance.stagger);
-
-            UIManager.Instance.ClearPlayerSelections();
-        }
-
-        // DEALER cycle (AI + animation)
-        yield return StartCoroutine(DealerCycleRoutine());
-
-        // next cycle or showdown
-        currentCycle++;
-        lastDiscardIndices.Clear();
-
-        if (currentCycle < maxCycles)
-        {
-            UIManager.Instance.ResetCardPopups();
-            UIManager.Instance.HideDealerCards();
-            UIManager.Instance.ClearPlayerSelections();
-            ShowDiscardPrompt();
-        }
-        else
-        {
-            discardPhase = false;
-
-            UIManager.Instance.RefreshHands();
-            UIManager.Instance.RevealDealerCards();
-            DetermineWinner();
-        }
-    }
-
-    private IEnumerator DealerCycleRoutine()
-    {
-        List<int> discard = DealerPickDiscards();
-
-        if (discard.Count > 0)
-        {
-            yield return UIManager.Instance.AnimateDiscard(
-                UIManager.Instance.dealerPanel,
-                discard,
-                UIManager.Instance.flyDuration,
-                UIManager.Instance.stagger);
-        }
-
-        if (discard.Count > 0)
-        {
-            dealer.Discard(discard);
-            dealer.Draw(deck, discard.Count);
-
-            UIManager.Instance.RefreshHands();
-            UIManager.Instance.HideDealerCards();
-
-            yield return UIManager.Instance.AnimateDraw(
-                UIManager.Instance.dealerPanel,
-                discard,
-                UIManager.Instance.flyDuration,
-                UIManager.Instance.stagger);
-        }
-        else
-        {
-            UIManager.Instance.RefreshHands();
-            UIManager.Instance.HideDealerCards();
-        }
-    }
-
-    private List<int> DealerPickDiscards()
-    {
-        Dictionary<Rank, int> counts = new Dictionary<Rank, int>();
-
-        foreach (CardData c in dealer.cards)
-        {
-            if (!counts.ContainsKey(c.rank))
-                counts[c.rank] = 0;
-
-            counts[c.rank]++;
-        }
-
-        List<int> discard = new List<int>();
-
-        for (int i = 0; i < dealer.cards.Count; i++)
-        {
-            if (counts[dealer.cards[i].rank] == 1)
-                discard.Add(i);
-        }
-
-        discard.Sort();
-        return discard;
+        DetermineWinner();
     }
 
     public void DetermineWinner()
@@ -257,16 +129,25 @@ public class DrawPokerGameManager : MonoBehaviour
         {
             result = "Player Wins!";
             if (ChipManager.Instance != null) ChipManager.Instance.PayoutToPlayer();
+
+            if (PokerDialogueManager.Instance != null)
+                PokerDialogueManager.Instance.ShowWinDialogue(playerResult.handName, dealerResult.handName);
         }
         else if (dealerScore > playerScore)
         {
             result = "Dealer Wins!";
             if (ChipManager.Instance != null) ChipManager.Instance.PayoutToDealer();
+
+            if (PokerDialogueManager.Instance != null)
+                PokerDialogueManager.Instance.ShowLoseDialogue(playerResult.handName, dealerResult.handName);
         }
         else
         {
             result = "Tie!";
             if (ChipManager.Instance != null) ChipManager.Instance.SplitPot();
+
+            if (PokerDialogueManager.Instance != null)
+                PokerDialogueManager.Instance.ShowTieDialogue(playerResult.handName, dealerResult.handName);
         }
 
         UIManager.Instance.ShowResult(
@@ -277,6 +158,8 @@ public class DrawPokerGameManager : MonoBehaviour
 
         UIManager.Instance.PopUpWinningCards(playerResult.winningCards, UIManager.Instance.playerPanel);
         UIManager.Instance.PopUpWinningCards(dealerResult.winningCards, UIManager.Instance.dealerPanel);
+
+        CheckForMatchEnd();
 
         if (ChipManager.Instance != null && ChipManager.Instance.IsGameOver())
             return;
