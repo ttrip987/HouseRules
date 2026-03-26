@@ -47,7 +47,12 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.velocity = input.normalized * moveSpeed;
+        //rb.velocity = input.normalized * moveSpeed;
+        rb.MovePosition(rb.position + input.normalized * moveSpeed * Time.fixedDeltaTime);
+
+        //Set the order in layer for the SpriteRenderer.
+        int orderInLayer = (int)transform.position.y;
+        spriteRenderer.sortingOrder = -orderInLayer;
     }
 
     void UpdateAnimationBools()
