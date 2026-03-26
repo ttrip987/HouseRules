@@ -1202,7 +1202,6 @@ RectTransform:
   m_Children:
   - {fileID: 1160072512}
   - {fileID: 1352718773}
-  - {fileID: 991132294}
   - {fileID: 615975414128537082}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2218,18 +2217,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 991132293}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 596875490}
   - {fileID: 1063465757}
-  m_Father: {fileID: 543917686}
+  m_Father: {fileID: 615975414128537082}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.00012302001, y: 399.85004}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1038920963
@@ -2738,7 +2737,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenuPanel: {fileID: 1352718772}
   settingsPanel: {fileID: 991132293}
-  mainMenuCanvasGroup: {fileID: 0}
+  mainMenuCanvasGroup: {fileID: 1352718774}
   fadeDuration: 1
   dialogue: {fileID: 615975414128537085}
   cutsceneStartNode: {fileID: 11400000, guid: c3c2e8d5f8faf8e4cbce6936b6335cc2, type: 2}
@@ -2751,8 +2750,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1301684457}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.0889846, y: -1.2982256, z: 2.2515464}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.0889845, y: -1.2982256, z: 2.2515464}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4037,6 +4036,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7450304788344113931, guid: 98b742bae2fcdcd419f6d08093219032, type: 3}
       insertIndex: -1
       addedObject: {fileID: 308098493}
+    - targetCorrespondingSourceObject: {fileID: 7450304788344113931, guid: 98b742bae2fcdcd419f6d08093219032, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 991132294}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3674951564026458155, guid: 98b742bae2fcdcd419f6d08093219032, type: 3}
       insertIndex: -1
@@ -4094,8 +4096,8 @@ SceneRoots:
   - {fileID: 6435610}
   - {fileID: 543917686}
   - {fileID: 1714674174}
-  - {fileID: 378477480}
   - {fileID: 1301684460}
+  - {fileID: 378477480}
   - {fileID: 391928858}
   - {fileID: 1074460652}
   - {fileID: 841543808}
