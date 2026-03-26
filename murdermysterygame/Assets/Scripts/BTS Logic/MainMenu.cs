@@ -4,19 +4,19 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    
+    [Header("Panels")]
     public GameObject mainMenuPanel;
     public GameObject settingsPanel;
 
-   
+    [Header("Fade")]
     public CanvasGroup mainMenuCanvasGroup;
     public float fadeDuration = 1f;
 
-   
+    [Header("Dialogue After Fade")]
     public Dialogue dialogue;                 
     public DialogueNodeAsset cutsceneStartNode;    
 
-    
+    [Header("Scene Name (after dialogue ends)")]
     public string gameSceneName = "Game";
 
     private bool isBusy;
@@ -69,7 +69,7 @@ public class MainMenu : MonoBehaviour
                 yield return null;
             }
 
-            mainMenuCanvasGroup.alpha = 1f;
+            mainMenuCanvasGroup.alpha = 0f;
         }
 
         mainMenuPanel.SetActive(false);
