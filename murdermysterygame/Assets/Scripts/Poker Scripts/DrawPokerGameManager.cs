@@ -83,26 +83,13 @@ public class DrawPokerGameManager : MonoBehaviour
         UIManager.Instance.HideDealerCards();
         UIManager.Instance.ClearPlayerSelections();
 
-        if (PokerDialogueManager.Instance != null)
-        {
-            PokerDialogueManager.Instance.ShowRoundStartDialogue();
-        }
+        if (PokerConversationController.Instance != null)
+            PokerConversationController.Instance.OnRoundStart();
+
+        if (showedAllInMsg)
+            Invoke(nameof(RevealAndScoreRound), 1.0f);
         else
-        {
-            if (showedAllInMsg)
-                Invoke(nameof(RevealAndScoreRound), 1.0f);
-            else
-                Invoke(nameof(RevealAndScoreRound), revealDelay);
-        }
-    }
-
-    public void ContinueFromDialogue()
-    {
-        if (!roundInProgress)
-            return;
-
-        CancelInvoke(nameof(RevealAndScoreRound));
-        Invoke(nameof(RevealAndScoreRound), revealDelay);
+            Invoke(nameof(RevealAndScoreRound), revealDelay);
     }
 
     private void RevealAndScoreRound()
@@ -130,24 +117,24 @@ public class DrawPokerGameManager : MonoBehaviour
             result = "Player Wins!";
             if (ChipManager.Instance != null) ChipManager.Instance.PayoutToPlayer();
 
-            if (PokerDialogueManager.Instance != null)
-                PokerDialogueManager.Instance.ShowWinDialogue(playerResult.handName, dealerResult.handName);
+            if (PokerConversationController.Instance != null)
+                PokerConversationController.Instance.OnPlayerWin();
         }
         else if (dealerScore > playerScore)
         {
             result = "Dealer Wins!";
             if (ChipManager.Instance != null) ChipManager.Instance.PayoutToDealer();
 
-            if (PokerDialogueManager.Instance != null)
-                PokerDialogueManager.Instance.ShowLoseDialogue(playerResult.handName, dealerResult.handName);
+            if (PokerConversationController.Instance != null)
+                PokerConversationController.Instance.OnPlayerLose();
         }
         else
         {
             result = "Tie!";
             if (ChipManager.Instance != null) ChipManager.Instance.SplitPot();
 
-            if (PokerDialogueManager.Instance != null)
-                PokerDialogueManager.Instance.ShowTieDialogue(playerResult.handName, dealerResult.handName);
+            if (PokerConversationController.Instance != null)
+                PokerConversationController.Instance.OnTie();
         }
 
         UIManager.Instance.ShowResult(
@@ -177,6 +164,9 @@ public class DrawPokerGameManager : MonoBehaviour
         {
             if (CreditManager.Instance != null)
                 CreditManager.Instance.AddCredits(bigWinCreditReward);
+
+            if (PokerConversationController.Instance != null)
+                PokerConversationController.Instance.OnMatchWon();
 
             Debug.Log("Player beat the dealer and earned permanent credits!");
         }

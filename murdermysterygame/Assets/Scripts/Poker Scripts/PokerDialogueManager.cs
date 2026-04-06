@@ -66,8 +66,7 @@ public class PokerDialogueManager : MonoBehaviour
 
     void FinishChoice()
     {
-        if (DrawPokerGameManager.Instance != null)
-            DrawPokerGameManager.Instance.ContinueFromDialogue();
+      
     }
 
     public void ShowWinDialogue(string playerHandName, string dealerHandName)
