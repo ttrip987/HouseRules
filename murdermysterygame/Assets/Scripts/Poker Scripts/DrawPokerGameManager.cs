@@ -12,12 +12,17 @@ public class DrawPokerGameManager : MonoBehaviour
 
     public int ante = 100;
     public float nextRoundDelay = 2.0f;
-    public float revealDelay = 1.0f;
+
+    [Header("Draw cycles per round")]
+    public int maxCycles = 2;
+
+    private int currentCycle = 0;
+    private bool drawPhase = false;
 
     public int winCreditReward = 25;
     public int bigWinCreditReward = 100;
 
-    private bool roundInProgress = false;
+    private List<int> lastDrawIndices = new List<int>();
 
     void Awake()
     {
@@ -29,10 +34,7 @@ public class DrawPokerGameManager : MonoBehaviour
         StartNewRound();
     }
 
-    public bool CanSelectDiscards()
-    {
-        return false;
-    }
+    public bool CanSelectDiscards() => drawPhase;
 
     public void StartNewRound()
     {
@@ -76,7 +78,9 @@ public class DrawPokerGameManager : MonoBehaviour
         player.Draw(deck, 5);
         dealer.Draw(deck, 5);
 
-        roundInProgress = true;
+        currentCycle = 0;
+        drawPhase = true;
+        lastDrawIndices.Clear();
 
         UIManager.Instance.RefreshHands();
         UIManager.Instance.ResetCardPopups();
@@ -87,19 +91,139 @@ public class DrawPokerGameManager : MonoBehaviour
             PokerConversationController.Instance.OnRoundStart();
 
         if (showedAllInMsg)
-            Invoke(nameof(RevealAndScoreRound), 1.0f);
+            Invoke(nameof(ShowDrawPrompt), 1.0f);
         else
-            Invoke(nameof(RevealAndScoreRound), revealDelay);
+            ShowDrawPrompt();
     }
 
-    private void RevealAndScoreRound()
+    private void ShowDrawPrompt()
     {
-        roundInProgress = false;
+        UIManager.Instance.ShowResult($"  ");
+    }
 
-        UIManager.Instance.RefreshHands();
-        UIManager.Instance.RevealDealerCards();
+    public void PlayerDraw()
+    {
+        if (!drawPhase) return;
 
-        DetermineWinner();
+        List<int> drawIndices = new List<int>();
+
+        for (int i = 0; i < UIManager.Instance.playerPanel.childCount; i++)
+        {
+            CardView view = UIManager.Instance.playerPanel.GetChild(i).GetComponent<CardView>();
+            if (view != null && view.selected)
+                drawIndices.Add(i);
+        }
+
+        drawIndices.Sort();
+        lastDrawIndices = drawIndices;
+
+        StartCoroutine(PlayerCycleRoutine());
+    }
+
+    private IEnumerator PlayerCycleRoutine()
+    {
+        if (lastDrawIndices.Count > 0)
+        {
+            yield return UIManager.Instance.AnimateDiscard(
+                UIManager.Instance.playerPanel,
+                lastDrawIndices,
+                UIManager.Instance.flyDuration,
+                UIManager.Instance.stagger);
+
+            player.Discard(lastDrawIndices);
+            player.Draw(deck, lastDrawIndices.Count);
+
+            UIManager.Instance.RefreshHands();
+            UIManager.Instance.HideDealerCards();
+
+            yield return UIManager.Instance.AnimateDraw(
+                UIManager.Instance.playerPanel,
+                lastDrawIndices,
+                UIManager.Instance.flyDuration,
+                UIManager.Instance.stagger);
+        }
+
+        UIManager.Instance.ClearPlayerSelections();
+
+        yield return StartCoroutine(DealerCycleRoutine());
+
+        currentCycle++;
+        lastDrawIndices.Clear();
+
+        if (currentCycle < maxCycles)
+        {
+            UIManager.Instance.ResetCardPopups();
+            UIManager.Instance.HideDealerCards();
+            UIManager.Instance.ClearPlayerSelections();
+
+            if (PokerConversationController.Instance != null)
+                PokerConversationController.Instance.OnDrawCycleComplete(currentCycle);
+
+            ShowDrawPrompt();
+        }
+        else
+        {
+            drawPhase = false;
+
+            UIManager.Instance.RefreshHands();
+            UIManager.Instance.RevealDealerCards();
+            DetermineWinner();
+        }
+    }
+
+    private IEnumerator DealerCycleRoutine()
+    {
+        List<int> drawIndices = DealerPickDiscards();
+
+        if (drawIndices.Count > 0)
+        {
+            yield return UIManager.Instance.AnimateDiscard(
+                UIManager.Instance.dealerPanel,
+                drawIndices,
+                UIManager.Instance.flyDuration,
+                UIManager.Instance.stagger);
+
+            dealer.Discard(drawIndices);
+            dealer.Draw(deck, drawIndices.Count);
+
+            UIManager.Instance.RefreshHands();
+            UIManager.Instance.HideDealerCards();
+
+            yield return UIManager.Instance.AnimateDraw(
+                UIManager.Instance.dealerPanel,
+                drawIndices,
+                UIManager.Instance.flyDuration,
+                UIManager.Instance.stagger);
+        }
+        else
+        {
+            UIManager.Instance.RefreshHands();
+            UIManager.Instance.HideDealerCards();
+        }
+    }
+
+    private List<int> DealerPickDiscards()
+    {
+        Dictionary<Rank, int> counts = new Dictionary<Rank, int>();
+
+        foreach (CardData c in dealer.cards)
+        {
+            if (!counts.ContainsKey(c.rank))
+                counts[c.rank] = 0;
+
+            counts[c.rank]++;
+        }
+
+        List<int> discard = new List<int>();
+
+        for (int i = 0; i < dealer.cards.Count; i++)
+        {
+            if (counts[dealer.cards[i].rank] == 1)
+                discard.Add(i);
+        }
+
+        discard.Sort();
+        return discard;
     }
 
     public void DetermineWinner()

@@ -177,4 +177,20 @@ public class Dialogue : MonoBehaviour
         if (rb != null)
             rb.velocity = Vector2.zero;
     }
+
+    public void ForceCloseDialogue()
+    {
+        StopAllCoroutines();
+        ClearChoices();
+
+        if (dialogueUI != null)
+            dialogueUI.SetActive(false);
+
+        if (lockPlayerOnOpen)
+            LockPlayer(false);
+
+        lockPlayerOnOpen = true;
+        isTyping = false;
+        currentNode = null;
+    }
 }

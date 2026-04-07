@@ -9,6 +9,7 @@ public class PokerConversationController : MonoBehaviour
 
     [Header("Main Poker Dialogue")]
     public DialogueNodeAsset roundStartNode;
+    public DialogueNodeAsset firstDrawDoneNode;
     public DialogueNodeAsset playerWinNode;
     public DialogueNodeAsset playerLoseNode;
     public DialogueNodeAsset tieNode;
@@ -31,52 +32,69 @@ public class PokerConversationController : MonoBehaviour
 
     public void OnRoundStart()
     {
-        if (dialogue == null || dialogue.IsOpen)
+        if (dialogue == null)
             return;
 
-        if (roundStartNode != null)
-        {
-            dialogue.StartDialogue(roundStartNode, false);
-            return;
-        }
+        StartPokerDialogue(roundStartNode, true);
+    }
 
-        TryAmbientRoundStart();
+    public void OnDrawCycleComplete(int cycleNumber)
+    {
+        if (dialogue == null)
+            return;
+
+        if (cycleNumber == 1)
+            StartPokerDialogue(firstDrawDoneNode, false);
     }
 
     public void OnPlayerWin()
     {
-        if (dialogue == null || dialogue.IsOpen)
+        if (dialogue == null)
             return;
 
-        if (playerWinNode != null)
-            dialogue.StartDialogue(playerWinNode, false);
+        StartPokerDialogue(playerWinNode, false);
     }
 
     public void OnPlayerLose()
     {
-        if (dialogue == null || dialogue.IsOpen)
+        if (dialogue == null)
             return;
 
-        if (playerLoseNode != null)
-            dialogue.StartDialogue(playerLoseNode, false);
+        StartPokerDialogue(playerLoseNode, false);
     }
 
     public void OnTie()
     {
-        if (dialogue == null || dialogue.IsOpen)
+        if (dialogue == null)
             return;
 
-        if (tieNode != null)
-            dialogue.StartDialogue(tieNode, false);
+        StartPokerDialogue(tieNode, false);
     }
 
     public void OnMatchWon()
     {
-        if (dialogue == null || dialogue.IsOpen)
+        if (dialogue == null)
             return;
 
-        if (matchWonNode != null)
-            dialogue.StartDialogue(matchWonNode, false);
+        StartPokerDialogue(matchWonNode, false);
+    }
+
+    void StartPokerDialogue(DialogueNodeAsset node, bool allowAmbientFallback)
+    {
+        if (dialogue == null)
+            return;
+
+        if (dialogue.IsOpen)
+            dialogue.ForceCloseDialogue();
+
+        if (node != null)
+        {
+            dialogue.StartDialogue(node, false);
+            return;
+        }
+
+        if (allowAmbientFallback)
+            TryAmbientRoundStart();
     }
 
     void TryAmbientRoundStart()

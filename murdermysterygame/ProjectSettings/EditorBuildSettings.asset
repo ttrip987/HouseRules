@@ -12,12 +12,12 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu.unity
     guid: e14166c9ebafa3c429354de0b5cf9bf1
   - enabled: 1
-    path: Assets/Scenes/Day 1 (tutorial).unity
+    path: Assets/Scenes/Day 0/Day 1 (tutorial).unity
     guid: d4016d993dd27f847a3e9f3c6f798f9b
   - enabled: 1
-    path: Assets/Scenes/Day 1 Poker Game (wesley).unity
+    path: Assets/Scenes/Day 0/Day 1 Poker Game (wesley).unity
     guid: c722ee14b47e0b7469c6d30dd21feb3b
   - enabled: 1
-    path: Assets/Scenes/Day 1 end scene.unity
+    path: Assets/Scenes/Day 0/Day 1 end scene.unity
     guid: b59dddac04e34c147ab97b8c5f8cb429
   m_configObjects: {}
