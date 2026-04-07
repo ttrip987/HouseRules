@@ -20,4 +20,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Day 0/Day 1 end scene.unity
     guid: b59dddac04e34c147ab97b8c5f8cb429
+  - enabled: 1
+    path: Assets/Scenes/Day 1/Day 2.unity
+    guid: db5a348ae50d2d749b76c530e15ed1ca
+  - enabled: 1
+    path: Assets/Scenes/Day 1/Day 1 Poker.unity
+    guid: ab186e65239c4894f92a8f920adc9df6
   m_configObjects: {}
