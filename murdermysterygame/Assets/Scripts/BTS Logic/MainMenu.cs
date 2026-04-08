@@ -21,6 +21,8 @@ public class MainMenu : MonoBehaviour
 
     private bool isBusy;
 
+    
+
     void Start()
     {
         mainMenuPanel.SetActive(true);
@@ -107,5 +109,10 @@ public class MainMenu : MonoBehaviour
     {
         Debug.Log("Quitting Game");
         Application.Quit();
+    }
+
+    public void LoadGame()
+    {
+        SaveManager.Instance.LoadGame();
     }
 }

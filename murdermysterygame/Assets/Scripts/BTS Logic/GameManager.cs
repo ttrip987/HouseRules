@@ -40,7 +40,6 @@ public class GameManager : MonoBehaviour
     {
         currentPhase = GamePhase.EndDay;
         currentDay++;
-        SaveSystem.SaveGame();
         StartDay(currentDay);
     }
 
@@ -56,10 +55,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadGame()
     {
-        SaveData data = SaveSystem.LoadGame();
-        if (data == null) return;
 
-        currentDay = data.currentDay;
         currentPhase = GamePhase.Investigation;
 
         SceneManager.LoadScene("InvestigationScene");

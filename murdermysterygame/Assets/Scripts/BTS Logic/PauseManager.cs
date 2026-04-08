@@ -9,6 +9,8 @@ public class PauseManager : MonoBehaviour
     public GameObject peopleMenu;
     public GameObject howToMenu;
 
+    AudioSource FlipPage;
+
     bool isPaused;
 
     void Start()
@@ -43,6 +45,7 @@ public class PauseManager : MonoBehaviour
         isPaused = true;
         Time.timeScale = 0f;
         OpenPauseMenu();
+        FlipPage.Play();
     }
 
     public void Resume()
@@ -51,36 +54,47 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1f;
 
         SetAllMenus(false);
+        FlipPage.Play();
+
     }
 
     public void OpenPauseMenu()
     {
         SetAllMenus(false);
         if (pauseMenu) pauseMenu.SetActive(true);
+        FlipPage.Play();
+
     }
 
     public void OpenSettingsMenu()
     {
         SetAllMenus(false);
         if (settingsMenu) settingsMenu.SetActive(true);
+        FlipPage.Play();
+
     }
 
     public void OpenPeopleMenu()
     {
         SetAllMenus(false);
         if (peopleMenu) peopleMenu.SetActive(true);
+        FlipPage.Play();
+
     }
 
     public void OpenHowToMenu()
     {
         SetAllMenus(false);
         if (howToMenu) howToMenu.SetActive(true);
+        FlipPage.Play();
+
     }
 
     public void QuitGame()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
+        
     }
 
     void SetAllMenus(bool active)

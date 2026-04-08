@@ -2,36 +2,32 @@ using UnityEngine;
 
 public class RoomTeleportTrigger : MonoBehaviour
 {
-    public GameObject player;              
-    public Transform destination;          
-    public BoxCollider2D newCameraBounds; 
+    public GameObject player;
+    public Transform destination;
+    public RoomDefinition targetRoom;
 
     private bool triggered = false;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        
         if (triggered) return;
         if (other.gameObject != player) return;
 
-        
-        player.transform.position = destination.position;
+        triggered = true;
 
-        
-        CameraFollowClamp cam = Camera.main.GetComponent<CameraFollowClamp>();
-        cam.SetBounds(newCameraBounds);
+        if (destination != null)
+            player.transform.position = destination.position;
 
-       
         Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
         if (rb != null)
             rb.velocity = Vector2.zero;
 
-        triggered = true;
+        if (RoomCameraController.Instance != null && targetRoom != null)
+            RoomCameraController.Instance.MoveToRoom(targetRoom);
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        
         if (other.gameObject == player)
             triggered = false;
     }

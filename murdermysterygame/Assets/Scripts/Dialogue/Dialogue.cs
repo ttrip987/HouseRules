@@ -21,7 +21,7 @@ public class Dialogue : MonoBehaviour
     public UnityEvent onDialogueFinished;
 
     [Header("Scene Actions")]
-    public string pokerSceneName = "PokerScene"; 
+    public string pokerSceneName = "PokerScene";
 
     private DialogueNodeAsset currentNode;
     private bool isTyping;
@@ -29,20 +29,25 @@ public class Dialogue : MonoBehaviour
     private PlayerController playerController;
     public bool IsOpen => dialogueUI != null && dialogueUI.activeSelf;
 
-    public float interactCooldown = 0.2f; // small delay
+    public float interactCooldown = 0.2f;
     private float nextAllowedInteractTime = 0f;
 
     public bool CanStartDialogue => Time.time >= nextAllowedInteractTime;
 
+    private bool lockPlayerOnOpen = true;
+
     void Awake()
     {
-        dialogueUI.SetActive(false);
+        if (dialogueUI != null)
+            dialogueUI.SetActive(false);
+
         playerController = FindObjectOfType<PlayerController>();
     }
 
     void Update()
     {
-        if (!dialogueUI.activeSelf) return;
+        if (dialogueUI == null || !dialogueUI.activeSelf)
+            return;
 
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
         {
@@ -54,11 +59,9 @@ public class Dialogue : MonoBehaviour
                 return;
             }
 
-            // If choices exist, wait for click
             if (currentNode.choices != null && currentNode.choices.Length > 0)
                 return;
 
-            // Continue chain or end
             if (currentNode.nextNode != null)
                 ShowNode(currentNode.nextNode);
             else
@@ -68,12 +71,22 @@ public class Dialogue : MonoBehaviour
 
     public void StartDialogue(DialogueNodeAsset startingNode)
     {
+        StartDialogue(startingNode, true);
+    }
+
+    public void StartDialogue(DialogueNodeAsset startingNode, bool lockPlayer)
+    {
         if (!CanStartDialogue) return;
         if (IsOpen) return;
         if (startingNode == null) return;
 
+        lockPlayerOnOpen = lockPlayer;
+
         dialogueUI.SetActive(true);
-        LockPlayer(true);
+
+        if (lockPlayerOnOpen)
+            LockPlayer(true);
+
         ShowNode(startingNode);
     }
 
@@ -116,15 +129,13 @@ public class Dialogue : MonoBehaviour
 
             btn.GetComponent<Button>().onClick.AddListener(() =>
             {
-            
                 if (choice.action == DialogueAction.LoadPokerScene)
                 {
-                    EndDialogue(); // close UI + unlock player
+                    EndDialogue();
                     SceneTransitionManager.Instance.LoadScene(pokerSceneName);
                     return;
                 }
 
-            
                 if (choice.nextNode != null)
                     ShowNode(choice.nextNode);
                 else
@@ -132,6 +143,7 @@ public class Dialogue : MonoBehaviour
             });
         }
     }
+
     void ClearChoices()
     {
         foreach (Transform child in choiceContainer)
@@ -143,8 +155,13 @@ public class Dialogue : MonoBehaviour
         StopAllCoroutines();
         ClearChoices();
 
-        dialogueUI.SetActive(false);
-        LockPlayer(false);
+        if (dialogueUI != null)
+            dialogueUI.SetActive(false);
+
+        if (lockPlayerOnOpen)
+            LockPlayer(false);
+
+        lockPlayerOnOpen = true;
 
         nextAllowedInteractTime = Time.time + interactCooldown;
         onDialogueFinished?.Invoke();
@@ -157,6 +174,23 @@ public class Dialogue : MonoBehaviour
         playerController.canMove = !lockState;
 
         Rigidbody2D rb = playerController.GetComponent<Rigidbody2D>();
-        if (rb != null) rb.velocity = Vector2.zero;
+        if (rb != null)
+            rb.velocity = Vector2.zero;
+    }
+
+    public void ForceCloseDialogue()
+    {
+        StopAllCoroutines();
+        ClearChoices();
+
+        if (dialogueUI != null)
+            dialogueUI.SetActive(false);
+
+        if (lockPlayerOnOpen)
+            LockPlayer(false);
+
+        lockPlayerOnOpen = true;
+        isTyping = false;
+        currentNode = null;
     }
 }

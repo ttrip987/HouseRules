@@ -41,6 +41,21 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Hand
+  - name: BackGrounds
     uniqueID: 4226799029
+    locked: 0
+  - name: Arm
+    uniqueID: 1168612269
+    locked: 0
+  - name: Card
+    uniqueID: 4067813133
+    locked: 0
+  - name: Thumb
+    uniqueID: 2955394651
+    locked: 0
+  - name: Characters&Props
+    uniqueID: 574713061
+    locked: 0
+  - name: UI
+    uniqueID: 3603372525
     locked: 0
