@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Bruno Start
   m_EditorClassIdentifier: 
-  line: 'Lets end this already
-
-'
+  line: I feel bad for ya, I really do.
   speakerName: Bruno
   choices: []
   nextNode: {fileID: 0}

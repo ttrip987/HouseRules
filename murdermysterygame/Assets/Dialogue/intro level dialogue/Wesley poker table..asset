@@ -17,9 +17,14 @@ MonoBehaviour:
   speakerName: Wesley
   choices:
   - choiceText: 'Yeah '
-    nextNode: {fileID: 11400000, guid: 7e6cc99e021727d4d91bfada08af5b8c, type: 2}
+    nextNode: {fileID: 0}
     action: 1
+    requiredFlag: 
+    failNode: {fileID: 0}
   - choiceText: No
     nextNode: {fileID: 11400000, guid: d28ad1b3fc0029240a25a3a797cddad3, type: 2}
     action: 0
+    requiredFlag: 
+    failNode: {fileID: 0}
   nextNode: {fileID: 0}
+  flagToSetOnEnter: 
