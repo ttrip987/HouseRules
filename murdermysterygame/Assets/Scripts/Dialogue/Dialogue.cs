@@ -132,6 +132,7 @@ public class Dialogue : MonoBehaviour
                 if (choice.action == DialogueAction.LoadPokerScene)
                 {
                     EndDialogue();
+                    Debug.Log("scene switched");
                     SceneTransitionManager.Instance.LoadScene(pokerSceneName);
                     return;
                 }

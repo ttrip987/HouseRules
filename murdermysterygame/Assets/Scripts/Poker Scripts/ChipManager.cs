@@ -9,8 +9,8 @@ public class ChipManager : MonoBehaviour
     public static ChipManager Instance;
 
     [Header("Chips and Pot")]
-    public int playerChips = 1000;
-    public int dealerChips = 1000;
+    public int playerChips;
+    public int dealerChips;
     public int pot = 0;
 
     [Header("UI Text")]
@@ -29,13 +29,46 @@ public class ChipManager : MonoBehaviour
     public Sprite chip100Sprite;
     public Sprite chip500Sprite;
 
+    [Header("Current Match Settings")]
+    public PokerMatchSettings currentMatch;
+
+    private string dealerDisplayName = "Dealer";
+
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
+
+        if (currentMatch == null)
+            currentMatch = FindObjectOfType<PokerMatchSettings>();
+
+        SetupMatch();
+    }
+
+    void SetupMatch()
+    {
+        if (currentMatch != null)
+        {
+            playerChips = currentMatch.startingPlayerChips;
+            dealerChips = currentMatch.startingDealerChips;
+            dealerDisplayName = currentMatch.dealerName;
+        }
+        else
+        {
+            playerChips = 1000;
+            dealerChips = 1000;
+            dealerDisplayName = "Dealer";
+        }
+
+        pot = 0;
         UpdateUI();
     }
 
-   
     public bool PlayerSpend(int amount)
     {
         if (playerChips < amount) return false;
@@ -45,7 +78,6 @@ public class ChipManager : MonoBehaviour
         return true;
     }
 
-    
     public bool DealerSpend(int amount)
     {
         if (dealerChips < amount) return false;
@@ -55,7 +87,6 @@ public class ChipManager : MonoBehaviour
         return true;
     }
 
-    
     public int PlayerPayUpTo(int amount)
     {
         int paid = Mathf.Clamp(amount, 0, playerChips);
@@ -65,7 +96,6 @@ public class ChipManager : MonoBehaviour
         return paid;
     }
 
-    
     public int DealerPayUpTo(int amount)
     {
         int paid = Mathf.Clamp(amount, 0, dealerChips);
@@ -102,31 +132,37 @@ public class ChipManager : MonoBehaviour
     {
         if (playerChips <= 0)
         {
-            if (SceneTransitionManager.Instance != null)
-                SceneTransitionManager.Instance.LoadScene("Day 1 Poker Game (wesley)");
-            else
-                SceneManager.LoadScene("Day 1 Poker Game (wesley)");
-
+            LoadResultScene(currentMatch != null ? currentMatch.playerLoseScene : "");
             return true;
         }
 
         if (dealerChips <= 0)
         {
-            if (SceneTransitionManager.Instance != null)
-                SceneTransitionManager.Instance.LoadScene("Day 1 end scene");
-            else
-                SceneManager.LoadScene("Day 1 end scene");
-
+            LoadResultScene(currentMatch != null ? currentMatch.dealerLoseScene : "");
             return true;
         }
 
         return false;
     }
 
+    void LoadResultScene(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogWarning("No result scene assigned for this poker match.");
+            return;
+        }
+
+        if (SceneTransitionManager.Instance != null)
+            SceneTransitionManager.Instance.LoadScene(sceneName);
+        else
+            SceneManager.LoadScene(sceneName);
+    }
+
     public void UpdateUI()
     {
         if (playerText) playerText.text = $"Player: {playerChips}";
-        if (dealerText) dealerText.text = $"Wesley: {dealerChips}";
+        if (dealerText) dealerText.text = $"{dealerDisplayName}: {dealerChips}";
         if (potText) potText.text = $"Pot: {pot}";
 
         UpdateChipStack(playerChips, playerChipParent);
@@ -150,8 +186,12 @@ public class ChipManager : MonoBehaviour
         };
 
         float yOffset = 0f;
-        foreach (var (value, sprite) in chipValues)
+
+        foreach (var chip in chipValues)
         {
+            int value = chip.Item1;
+            Sprite sprite = chip.Item2;
+
             if (value <= 0 || sprite == null) continue;
 
             int count = amount / value;
@@ -160,10 +200,15 @@ public class ChipManager : MonoBehaviour
             for (int i = 0; i < count; i++)
             {
                 GameObject chipGO = Instantiate(chipPrefab, parent.transform);
-                chipGO.GetComponent<Image>().sprite = sprite;
+
+                Image img = chipGO.GetComponent<Image>();
+                if (img != null)
+                    img.sprite = sprite;
 
                 RectTransform rt = chipGO.GetComponent<RectTransform>();
-                rt.anchoredPosition = new Vector2(0, yOffset);
+                if (rt != null)
+                    rt.anchoredPosition = new Vector2(0, yOffset);
+
                 yOffset += 10f;
             }
         }
