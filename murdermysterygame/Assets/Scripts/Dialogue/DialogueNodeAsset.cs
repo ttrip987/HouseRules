@@ -17,6 +17,9 @@ public class DialogueNodeAsset : ScriptableObject
     public DialogueChoiceAsset[] choices;
 
     public DialogueNodeAsset nextNode;
+
+    [Header("Progression")]
+    public string flagToSetOnEnter;
 }
 
 [System.Serializable]
@@ -25,5 +28,11 @@ public class DialogueChoiceAsset
     public string choiceText;
     public DialogueNodeAsset nextNode;
 
-    public DialogueAction action;  // ✅ NEW
+    public DialogueAction action;
+
+
+    public string requiredFlag;
+
+ 
+    public DialogueNodeAsset failNode;
 }

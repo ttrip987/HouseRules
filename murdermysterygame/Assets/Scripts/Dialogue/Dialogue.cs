@@ -104,21 +104,6 @@ public class Dialogue : MonoBehaviour
         isTyping = false;
     }
 
-    void ShowNode(DialogueNodeAsset node)
-    {
-        StopAllCoroutines();
-        ClearChoices();
-
-        currentNode = node;
-
-        if (nameText != null)
-            nameText.text = node.speakerName;
-
-        StartCoroutine(TypeLine(node.line));
-
-        if (node.choices != null && node.choices.Length > 0)
-            CreateChoices(node.choices);
-    }
 
     void CreateChoices(DialogueChoiceAsset[] choices)
     {
@@ -129,20 +114,42 @@ public class Dialogue : MonoBehaviour
 
             btn.GetComponent<Button>().onClick.AddListener(() =>
             {
-                if (choice.action == DialogueAction.LoadPokerScene)
-                {
-                    EndDialogue();
-                    Debug.Log("scene switched");
-                    SceneTransitionManager.Instance.LoadScene(pokerSceneName);
-                    return;
-                }
-
-                if (choice.nextNode != null)
-                    ShowNode(choice.nextNode);
-                else
-                    EndDialogue();
+                HandleChoice(choice);
             });
         }
+    }
+
+    void HandleChoice(DialogueChoiceAsset choice)
+    {
+        // Check requirement first
+        if (!string.IsNullOrEmpty(choice.requiredFlag))
+        {
+            if (GameProgress.Instance == null || !GameProgress.Instance.HasFlag(choice.requiredFlag))
+            {
+                Debug.Log("Requirement not met: " + choice.requiredFlag);
+
+                if (choice.failNode != null)
+                {
+                    ShowNode(choice.failNode);
+                }
+
+                return;
+            }
+        }
+
+        // Load poker scene if this choice is meant to do that
+        if (choice.action == DialogueAction.LoadPokerScene)
+        {
+            EndDialogue();
+            SceneTransitionManager.Instance.LoadScene(pokerSceneName);
+            return;
+        }
+
+        // Continue dialogue normally
+        if (choice.nextNode != null)
+            ShowNode(choice.nextNode);
+        else
+            EndDialogue();
     }
 
     void ClearChoices()
@@ -193,5 +200,27 @@ public class Dialogue : MonoBehaviour
         lockPlayerOnOpen = true;
         isTyping = false;
         currentNode = null;
+    }
+
+    void ShowNode(DialogueNodeAsset node)
+    {
+        StopAllCoroutines();
+        ClearChoices();
+
+        currentNode = node;
+
+    
+        if (!string.IsNullOrEmpty(node.flagToSetOnEnter))
+        {
+            GameProgress.Instance.SetFlag(node.flagToSetOnEnter);
+        }
+
+        if (nameText != null)
+            nameText.text = node.speakerName;
+
+        StartCoroutine(TypeLine(node.line));
+
+        if (node.choices != null && node.choices.Length > 0)
+            CreateChoices(node.choices);
     }
 }
