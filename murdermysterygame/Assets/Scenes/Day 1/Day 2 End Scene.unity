@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b144640cb0fd420468b07752baa82047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingNode: {fileID: 11400000, guid: 2367edab9dd25ec43b0b0c2d2b2e8650, type: 2}
+  startingNode: {fileID: 11400000, guid: 135228e3145abd04da375d2f50374e69, type: 2}
 --- !u!61 &150120672
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -646,6 +646,22 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -1.4
       objectReference: {fileID: 0}
+    - target: {fileID: 2040681282832915851, guid: 0d24411afee39194fb56f88a5b7864ed, type: 3}
+      propertyPath: m_Size.x
+      value: 11.279491
+      objectReference: {fileID: 0}
+    - target: {fileID: 2040681282832915851, guid: 0d24411afee39194fb56f88a5b7864ed, type: 3}
+      propertyPath: m_Size.y
+      value: 11.315104
+      objectReference: {fileID: 0}
+    - target: {fileID: 2040681282832915851, guid: 0d24411afee39194fb56f88a5b7864ed, type: 3}
+      propertyPath: m_Offset.x
+      value: 4.943324
+      objectReference: {fileID: 0}
+    - target: {fileID: 2040681282832915851, guid: 0d24411afee39194fb56f88a5b7864ed, type: 3}
+      propertyPath: m_Offset.y
+      value: -3.816206
+      objectReference: {fileID: 0}
     - target: {fileID: 2471604938882704022, guid: 0d24411afee39194fb56f88a5b7864ed, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6.94
@@ -946,7 +962,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b144640cb0fd420468b07752baa82047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingNode: {fileID: 11400000, guid: 153504f24dc59df42a7714e2e825b202, type: 2}
+  startingNode: {fileID: 11400000, guid: 037bd5b733e07f54cb21d040a64c82e7, type: 2}
 --- !u!61 &562677149
 BoxCollider2D:
   m_ObjectHideFlags: 0

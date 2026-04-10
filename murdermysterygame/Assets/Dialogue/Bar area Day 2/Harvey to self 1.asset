@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Harvey to self 1
   m_EditorClassIdentifier: 
-  line: (A VIP Lounge at a family event. Ugh Geez.)
+  line: (It doesn't look like the VIPS are here yet. I'll have to get one later.)
   speakerName: Harvey
   choices: []
   nextNode: {fileID: 0}
+  flagToSetOnEnter: 

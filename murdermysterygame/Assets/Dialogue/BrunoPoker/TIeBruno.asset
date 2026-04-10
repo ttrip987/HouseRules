@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: TIeBruno
   m_EditorClassIdentifier: 
-  line: Grr
+  line: Grrr. This doesn't mean anything.
   speakerName: Bruno
   choices: []
   nextNode: {fileID: 0}

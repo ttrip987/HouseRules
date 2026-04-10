@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: TellingBillpt2
   m_EditorClassIdentifier: 
-  line: 'Some bad news in paradise. I found a dead body today. Not sure who it is
-    but I have my suspicions. Please get back to me ASAP. '
+  line: Hidden back room. Body found. No ID. Fresh.
   speakerName: 
   choices:
   - choiceText: Close

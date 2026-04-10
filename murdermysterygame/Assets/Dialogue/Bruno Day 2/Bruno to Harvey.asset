@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Bruno to Harvey
   m_EditorClassIdentifier: 
-  line: 'Well look who I got paired up with. '
+  line: 'Well, well, well, look who I got paired up with. '
   speakerName: Bruno
   choices: []
   nextNode: {fileID: 11400000, guid: 9f1da636ae7cb05488b2edaec30568a6, type: 2}

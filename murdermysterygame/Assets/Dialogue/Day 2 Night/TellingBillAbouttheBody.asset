@@ -15,5 +15,5 @@ MonoBehaviour:
   line: 'To Bill:'
   speakerName: 
   choices: []
-  nextNode: {fileID: 0}
+  nextNode: {fileID: 11400000, guid: 2c87af4abbdb965468d99790566e3580, type: 2}
   flagToSetOnEnter: 

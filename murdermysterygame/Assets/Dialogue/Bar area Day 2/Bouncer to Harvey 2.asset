@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Bouncer to Harvey 2
   m_EditorClassIdentifier: 
-  line: 'Gotta have one to get in. '
+  line: Come back when you've found it.
   speakerName: Bouncer
   choices: []
   nextNode: {fileID: 11400000, guid: 204eba36936a95243903cfa6478aec3e, type: 2}
+  flagToSetOnEnter: 

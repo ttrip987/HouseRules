@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Deadbodyinspection
   m_EditorClassIdentifier: 
-  line: 'The body still looks fresh. This is not great. '
+  line: Still looks fresh. I can't even tell what he used to look like.
   speakerName: Harvey
   choices: []
   nextNode: {fileID: 11400000, guid: 4d9c2a7fc230481408773f55ba8067e1, type: 2}
+  flagToSetOnEnter: 

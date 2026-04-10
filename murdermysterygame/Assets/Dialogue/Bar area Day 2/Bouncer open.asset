@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: Bouncer open
   m_EditorClassIdentifier: 
-  line: VIP ID?
+  line: Sorry, I'll need to see your VIP pass.
   speakerName: Bouncer
   choices: []
   nextNode: {fileID: 11400000, guid: 204eba36936a95243903cfa6478aec3e, type: 2}
+  flagToSetOnEnter: 

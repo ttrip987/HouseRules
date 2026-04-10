@@ -428,7 +428,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dealerName: Wesley
   startingPlayerChips: 2000
-  startingDealerChips: 0
+  startingDealerChips: 2000
   playerLoseScene: Day 1 Poker Game (wesley)
   dealerLoseScene: Day 1 end scene
 --- !u!1001 &3890983825938944528

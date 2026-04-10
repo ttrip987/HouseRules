@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bfd23aa9861cb42a751716744564d2, type: 3}
   m_Name: deadbodyinspection2
   m_EditorClassIdentifier: 
-  line: 'Looks like my weekend just got more intresting. I should probably tell Bill. '
+  line: Looks like someone got dealt a bad hand. I need to report back.
   speakerName: Harvey
   choices: []
   nextNode: {fileID: 0}
