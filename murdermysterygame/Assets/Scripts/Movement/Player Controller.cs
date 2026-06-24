@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 input;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
+    
+
 
     void Awake()
     {
@@ -84,4 +86,9 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("MovingLeft", false);
         animator.SetBool("MovingRight", false);
     }
+
+    public void SetMoveSpeed(float newSpeed)
+    {
+        moveSpeed = newSpeed;
+    }   
 }
